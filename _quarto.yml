@@ -1,0 +1,43 @@
+project:
+  type: book
+  output-dir: _book
+
+lang: en
+
+book:
+  title: "NLP Lecture 2026"
+  subtitle: "Traitement du Langage Naturel"
+  author: "Christophe Ambroise"
+  date: today
+  license: "CC BY-NC-SA 4.0"
+  
+  chapters:
+    - index.qmd
+    - chapters/word-embedding.qmd
+    - chapters/transformers.qmd
+    - chapters/transformers-exercice.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    code-fold: false
+    highlight-style: github
+    
+  pdf:
+    documentclass: book
+    number-sections: true
+    toc: true
+    toc-depth: 2
+    lof: true
+    lot: true
+    geometry:
+      - top=30mm
+      - left=30mm
+      - right=30mm
+      - heightrounded
+
+execute:
+  freeze: auto

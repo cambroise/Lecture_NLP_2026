@@ -1,0 +1,21 @@
+# NLP Lecture 2026
+
+Natural Language Processing
+
+This document covers the fundamentals of NLP, from word embeddings to Transformer architectures, with practical exercises based on nanoGPT.
+
+## Contents
+
+1. **Word Embeddings** - Word vectors, co-occurrence matrices, TF-IDF, PMI, LSA, LDA, and Word2Vec
+2. **Transformers** - Attention architecture, contextual embeddings, and language models
+3. **Exercises** - Practical implementation with nanoGPT and key concepts
+
+## Learning objectives
+
+- Understand attention mechanisms and Transformers
+- Master different approaches to word embeddings
+- Implement the concepts with practical code
+
+---
+
+*Course 2026*

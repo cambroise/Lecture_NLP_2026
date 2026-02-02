@@ -1,0 +1,139 @@
+## Exercises - GPT from scratch 
+
+These exercises follow the steps of Karpathy's "Let's build GPT" video, aiming to build a small ChatGPT-like model from scratch.
+
+We build a Generatively Pretrained Transformer (GPT), following the paper "Attention is All You Need" and OpenAI's GPT-2 / GPT-3. We talk about connections to ChatGPT, which has taken the world by storm. We watch GitHub Copilot, itself a GPT, help us write a GPT (meta :D!) . I recommend people watch the earlier makemore videos to get comfortable with the autoregressive language modeling framework and basics of tensors and PyTorch nn, which we take for granted in this video.
+
+## Links:
+
+- Google colab for the video: https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing
+
+- GitHub repo for the video:  https://github.com/karpathy/ng-video-lecture
+- Playlist of the whole Zero to Hero series so far:    • The spelled-out intro to neural networks a...  
+
+- nanoGPT repo: https://github.com/karpathy/nanoGPT
+-  website: https://karpathy.ai
+
+## Supplementary links:
+
+- Attention is All You Need paper: https://arxiv.org/abs/1706.03762
+- OpenAI GPT-3 paper: https://arxiv.org/abs/2005.14165 
+- OpenAI ChatGPT blog post: https://openai.com/blog/chatgpt/
+- The GPU I'm training the model on is from Lambda GPU Cloud, I think the best and easiest way to spin up an on-demand GPU instance in the cloud that you can ssh to: https://lambdalabs.com . If you prefer to work in notebooks, I think the easiest path today is Google Colab.
+
+
+
+
+### 1) Data and tokenizer
+
+**Goal:** Prepare a small text dataset and a tokenizer.
+
+**Notes**
+- Karpathy mentions tokenization choices and vocab size.
+- OpenAI uses ~50k token vocabulary in some models.
+
+**Suggested references**
+- SentencePiece (GitHub)
+- SentencePiece (Documentation)
+- tiktoken (GitHub)
+- OpenAI Tokenizer Tool (Interactive)
+
+**Exercises**
+1. Choose a dataset (tiny Shakespeare, your own corpus, etc.).
+2. Compare a character-level tokenizer vs. a subword tokenizer.
+3. Report vocab size, average tokens per sentence, and OOV rate.
+
+---
+
+### 2) Language modeling basics
+
+**Goal:** Understand the training objective and baseline models.
+
+**Key ideas**
+- Bigram model
+- Negative log-likelihood (NLL) / cross entropy
+- Causal masking: the future cannot communicate with the past
+
+**Exercises**
+1. Implement a bigram model.
+2. Compute NLL / cross entropy on a validation split.
+3. Compare with random baseline.
+
+---
+
+### 3) Attention mechanism
+
+**Goal:** Build intuition for attention and causal masking.
+
+**Key ideas**
+- Attention is a communication mechanism.
+- Aggregate the past using query (current position) and key (past positions).
+- For sentiment analysis, the attention matrix may be non-triangular.
+- Decoder attention uses a triangular mask (causal).
+
+**Exercises**
+1. Visualize attention matrices with and without causal masking.
+2. Explain why causal masking is required for next-token prediction.
+
+---
+
+### 4) Transformer block
+
+**Goal:** Understand the full block structure.
+
+**Components**
+- Multi-head attention
+- Feed-forward network
+- Residual (skip) connections (see "Deep Residual Learning for Image Recognition")
+- LayerNorm (nowadays applied before the transformation)
+- Dropout ("Dropout: a simple way to prevent neural networks from overfitting")
+
+**Exercises**
+1. Assemble a single Transformer block.
+2. Verify shape consistency across sub-layers.
+3. Experiment with dropout on/off.
+
+---
+
+### 5) Encoder vs decoder
+
+**Goal:** Clarify model types and masking.
+
+**Key ideas**
+- Decoder blocks use a triangular (causal) mask.
+- Encoder attention is fully visible (no causal mask).
+- Encoders can provide keys/values; decoder supplies queries (encoder-decoder setup).
+
+**Exercises**
+1. Draw the attention mask for encoder, decoder, and encoder-decoder.
+2. Explain when each architecture is used.
+
+---
+
+### 6) Training loop
+
+**Goal:** Train a small GPT on a dataset.
+
+**Steps**
+1. Prepare train/val splits.
+2. Define model hyperparameters (block size, n_layers, n_heads, d_model).
+3. Train with teacher forcing and causal loss.
+4. Track loss curves and sample generations.
+
+**Exercises**
+- Compare context lengths from 1 to block size and observe quality.
+- Report training loss vs validation loss.
+
+---
+
+### 7) Fine-tuning and evaluation
+
+**Goal:** Explore fine-tuning and downstream tasks.
+
+**Key idea**
+- Fine-tuning follows a pretraining step similar to decoder-only LM training.
+
+**Exercises**
+1. Fine-tune on a small domain dataset.
+2. Evaluate with qualitative samples.
+
