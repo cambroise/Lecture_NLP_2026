@@ -14,6 +14,7 @@ book:
   chapters:
     - index.qmd
     - chapters/word-embedding.qmd
+    - chapters/embedding-exercise.qmd
     - chapters/transformers.qmd
     - chapters/transformers-exercice.qmd
 

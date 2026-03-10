@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3&nbsp; The nature of transformers – NLP Lecture 2026</title>
+<title>4&nbsp; The nature of transformers – NLP Lecture 2026</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -31,7 +31,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../chapters/transformers-exercice.html" rel="next">
-<link href="../chapters/word-embedding.html" rel="prev">
+<link href="../chapters/embedding-exercise.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -115,7 +115,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/transformers.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The nature of transformers</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/transformers.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The nature of transformers</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -156,14 +156,20 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../chapters/embedding-exercise.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Exercises — LSA and Word2Vec Embeddings</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../chapters/transformers.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The nature of transformers</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The nature of transformers</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/transformers-exercice.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Exercises - GPT from scratch</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Exercises — GPT from scratch</span></span></a>
   </div>
 </li>
     </ul>
@@ -176,21 +182,21 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#the-nature-of-transformers" id="toc-the-nature-of-transformers" class="nav-link active" data-scroll-target="#the-nature-of-transformers"><span class="header-section-number">3.1</span> The nature of transformers</a></li>
-  <li><a href="#optimized-criteria" id="toc-optimized-criteria" class="nav-link" data-scroll-target="#optimized-criteria"><span class="header-section-number">3.2</span> Optimized criteria</a></li>
-  <li><a href="#masked-language-modeling-mlm" id="toc-masked-language-modeling-mlm" class="nav-link" data-scroll-target="#masked-language-modeling-mlm"><span class="header-section-number">3.3</span> Masked Language Modeling (MLM)</a></li>
-  <li><a href="#conditional-language-modeling-translation-loss" id="toc-conditional-language-modeling-translation-loss" class="nav-link" data-scroll-target="#conditional-language-modeling-translation-loss"><span class="header-section-number">3.4</span> Conditional Language Modeling / Translation Loss</a></li>
-  <li><a href="#initial-embedding" id="toc-initial-embedding" class="nav-link" data-scroll-target="#initial-embedding"><span class="header-section-number">3.5</span> Initial embedding</a></li>
-  <li><a href="#a-minimal-self-attention-architecture-for-decoder" id="toc-a-minimal-self-attention-architecture-for-decoder" class="nav-link" data-scroll-target="#a-minimal-self-attention-architecture-for-decoder"><span class="header-section-number">3.6</span> A minimal self-attention architecture for decoder</a></li>
-  <li><a href="#attention-and-matrix-notation" id="toc-attention-and-matrix-notation" class="nav-link" data-scroll-target="#attention-and-matrix-notation"><span class="header-section-number">3.7</span> Attention and matrix notation</a></li>
-  <li><a href="#ilustration-of-self-attention" id="toc-ilustration-of-self-attention" class="nav-link" data-scroll-target="#ilustration-of-self-attention"><span class="header-section-number">3.8</span> Ilustration of self-Attention</a></li>
-  <li><a href="#interpretation-of-q-k-v" id="toc-interpretation-of-q-k-v" class="nav-link" data-scroll-target="#interpretation-of-q-k-v"><span class="header-section-number">3.9</span> Interpretation of Q, K, V</a></li>
-  <li><a href="#important-details" id="toc-important-details" class="nav-link" data-scroll-target="#important-details"><span class="header-section-number">3.10</span> Important details</a></li>
-  <li><a href="#positional-encoding" id="toc-positional-encoding" class="nav-link" data-scroll-target="#positional-encoding"><span class="header-section-number">3.11</span> Positional encoding</a></li>
-  <li><a href="#feed-forward-neural-network" id="toc-feed-forward-neural-network" class="nav-link" data-scroll-target="#feed-forward-neural-network"><span class="header-section-number">3.12</span> Feed Forward Neural Network</a></li>
-  <li><a href="#skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al." id="toc-skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al." class="nav-link" data-scroll-target="#skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al."><span class="header-section-number">3.13</span> Skip connection (original paper “Deep Residual Learning for Image Recognition” 2015 by He et al.)</a></li>
-  <li><a href="#multi-head-attention" id="toc-multi-head-attention" class="nav-link" data-scroll-target="#multi-head-attention"><span class="header-section-number">3.14</span> Multi-head attention</a></li>
-  <li><a href="#fine-tuning" id="toc-fine-tuning" class="nav-link" data-scroll-target="#fine-tuning"><span class="header-section-number">3.15</span> Fine tuning</a></li>
+  <li><a href="#the-nature-of-transformers" id="toc-the-nature-of-transformers" class="nav-link active" data-scroll-target="#the-nature-of-transformers"><span class="header-section-number">4.1</span> The nature of transformers</a></li>
+  <li><a href="#optimized-criteria" id="toc-optimized-criteria" class="nav-link" data-scroll-target="#optimized-criteria"><span class="header-section-number">4.2</span> Optimized criteria</a></li>
+  <li><a href="#masked-language-modeling-mlm" id="toc-masked-language-modeling-mlm" class="nav-link" data-scroll-target="#masked-language-modeling-mlm"><span class="header-section-number">4.3</span> Masked Language Modeling (MLM)</a></li>
+  <li><a href="#conditional-language-modeling-translation-loss" id="toc-conditional-language-modeling-translation-loss" class="nav-link" data-scroll-target="#conditional-language-modeling-translation-loss"><span class="header-section-number">4.4</span> Conditional Language Modeling / Translation Loss</a></li>
+  <li><a href="#initial-embedding" id="toc-initial-embedding" class="nav-link" data-scroll-target="#initial-embedding"><span class="header-section-number">4.5</span> Initial embedding</a></li>
+  <li><a href="#a-minimal-self-attention-architecture-for-decoder" id="toc-a-minimal-self-attention-architecture-for-decoder" class="nav-link" data-scroll-target="#a-minimal-self-attention-architecture-for-decoder"><span class="header-section-number">4.6</span> A minimal self-attention architecture for decoder</a></li>
+  <li><a href="#attention-and-matrix-notation" id="toc-attention-and-matrix-notation" class="nav-link" data-scroll-target="#attention-and-matrix-notation"><span class="header-section-number">4.7</span> Attention and matrix notation</a></li>
+  <li><a href="#ilustration-of-self-attention" id="toc-ilustration-of-self-attention" class="nav-link" data-scroll-target="#ilustration-of-self-attention"><span class="header-section-number">4.8</span> Ilustration of self-Attention</a></li>
+  <li><a href="#interpretation-of-q-k-v" id="toc-interpretation-of-q-k-v" class="nav-link" data-scroll-target="#interpretation-of-q-k-v"><span class="header-section-number">4.9</span> Interpretation of Q, K, V</a></li>
+  <li><a href="#important-details" id="toc-important-details" class="nav-link" data-scroll-target="#important-details"><span class="header-section-number">4.10</span> Important details</a></li>
+  <li><a href="#positional-encoding" id="toc-positional-encoding" class="nav-link" data-scroll-target="#positional-encoding"><span class="header-section-number">4.11</span> Positional encoding</a></li>
+  <li><a href="#feed-forward-neural-network" id="toc-feed-forward-neural-network" class="nav-link" data-scroll-target="#feed-forward-neural-network"><span class="header-section-number">4.12</span> Feed Forward Neural Network</a></li>
+  <li><a href="#skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al." id="toc-skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al." class="nav-link" data-scroll-target="#skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al."><span class="header-section-number">4.13</span> Skip connection (original paper “Deep Residual Learning for Image Recognition” 2015 by He et al.)</a></li>
+  <li><a href="#multi-head-attention" id="toc-multi-head-attention" class="nav-link" data-scroll-target="#multi-head-attention"><span class="header-section-number">4.14</span> Multi-head attention</a></li>
+  <li><a href="#fine-tuning" id="toc-fine-tuning" class="nav-link" data-scroll-target="#fine-tuning"><span class="header-section-number">4.15</span> Fine tuning</a></li>
   </ul>
 </nav>
     </div>
@@ -199,7 +205,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The nature of transformers</span></h1>
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The nature of transformers</span></h1>
 </div>
 
 
@@ -247,8 +253,8 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<section id="the-nature-of-transformers" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="the-nature-of-transformers"><span class="header-section-number">3.1</span> The nature of transformers</h2>
+<section id="the-nature-of-transformers" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="the-nature-of-transformers"><span class="header-section-number">4.1</span> The nature of transformers</h2>
 <div class="columns">
 <div class="column" style="width:35%;">
 <p>A classical transformer is a function <span class="math display">\[
@@ -270,19 +276,19 @@ p_{|V|}\end{bmatrix}
 <li><span class="math inline">\(w_{1:n}\)</span> be a sequence of token, where each <span class="math inline">\(w_i \in \mathcal V\)</span> (In practice context varies from 1 to n, the blocksize)</li>
 <li><span class="math inline">\(p_j\)</span> is the probability of <span class="math inline">\(w_{(j)}\)</span> the jth token in <span class="math inline">\(\mathcal V\)</span></li>
 </ul>
-<section id="remarks" class="level3" data-number="3.1.1">
-<h3 data-number="3.1.1" class="anchored" data-anchor-id="remarks"><span class="header-section-number">3.1.1</span> Remarks</h3>
+<section id="remarks" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="remarks"><span class="header-section-number">4.1.1</span> Remarks</h3>
 <ul>
 <li><span class="math inline">\(w_{1:n}\)</span> is usually coded a matrix of one-hot vectors with <span class="math inline">\(w_{1:n} \in \mathbb{R}^{n \times |V|}\)</span>.</li>
 <li>For classical chatbot <span class="math inline">\(p_j = P(w_{n+1}  = w_{(j)} | w_{1:n})\)</span> where <span class="math inline">\(w_{(j)}\)</span> is the jthe element of <span class="math inline">\(\mathcal V\)</span>.</li>
 </ul>
 </section>
 </section>
-<section id="optimized-criteria" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="optimized-criteria"><span class="header-section-number">3.2</span> Optimized criteria</h2>
+<section id="optimized-criteria" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="optimized-criteria"><span class="header-section-number">4.2</span> Optimized criteria</h2>
 <p>Transformers typically optimize different criteria depending on the task they are trained on.</p>
-<section id="causal-language-modeling-clm-autoregressive-loss" class="level3" data-number="3.2.1">
-<h3 data-number="3.2.1" class="anchored" data-anchor-id="causal-language-modeling-clm-autoregressive-loss"><span class="header-section-number">3.2.1</span> Causal Language Modeling (CLM) / Autoregressive Loss</h3>
+<section id="causal-language-modeling-clm-autoregressive-loss" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="causal-language-modeling-clm-autoregressive-loss"><span class="header-section-number">4.2.1</span> Causal Language Modeling (CLM) / Autoregressive Loss</h3>
 <ul>
 <li><strong>Used in:</strong> GPT models</li>
 <li><strong>Objective:</strong> Predict the next token given the previous tokens</li>
@@ -297,8 +303,8 @@ L_{CLM} = -  \sum_j\sum_{t=1}^n \sum_{c\in V} I\!\!I_{w_t^j=c}\log P(w_t^j=c | w
 \]</span></p>
 </section>
 </section>
-<section id="masked-language-modeling-mlm" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="masked-language-modeling-mlm"><span class="header-section-number">3.3</span> Masked Language Modeling (MLM)</h2>
+<section id="masked-language-modeling-mlm" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="masked-language-modeling-mlm"><span class="header-section-number">4.3</span> Masked Language Modeling (MLM)</h2>
 <ul>
 <li><strong>Used in:</strong> BERT models</li>
 <li><strong>Objective:</strong> Predict randomly masked tokens in a sentence.</li>
@@ -308,8 +314,8 @@ L_{CLM} = -  \sum_j\sum_{t=1}^n \sum_{c\in V} I\!\!I_{w_t^j=c}\log P(w_t^j=c | w
 L_{MLM} = -  \sum_j \sum_{t \in M_j} \sum_{c\in V} I\!\!I_{w_t^j=c} \log P(w_t^j=c | w^j_{(1:n)\backslash M})
 \]</span></p>
 </section>
-<section id="conditional-language-modeling-translation-loss" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="conditional-language-modeling-translation-loss"><span class="header-section-number">3.4</span> Conditional Language Modeling / Translation Loss</h2>
+<section id="conditional-language-modeling-translation-loss" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="conditional-language-modeling-translation-loss"><span class="header-section-number">4.4</span> Conditional Language Modeling / Translation Loss</h2>
 <ul>
 <li><strong>Used in:</strong> T5, BART</li>
 <li><strong>Objective:</strong> Predict an output sequence given an input sequence (e.g., translation, summarization).</li>
@@ -318,13 +324,13 @@ L_{MLM} = -  \sum_j \sum_{t \in M_j} \sum_{c\in V} I\!\!I_{w_t^j=c} \log P(w_t^j
 <p><span class="math display">\[
 L_{Seq2Seq} = - \sum_j \sum_{t=1}^m \sum_{c\in V} I\!\!I_{v_t^j=c} \log P(v_m^j=c | v^j_{1:m-1}, w^j_{1:n})
 \]</span></p>
-<section id="other-losses" class="level3" data-number="3.4.1">
-<h3 data-number="3.4.1" class="anchored" data-anchor-id="other-losses"><span class="header-section-number">3.4.1</span> Other losses</h3>
+<section id="other-losses" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="other-losses"><span class="header-section-number">4.4.1</span> Other losses</h3>
 <p>Transformers exact objective functions depends on type of considered problems</p>
 </section>
 </section>
-<section id="initial-embedding" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="initial-embedding"><span class="header-section-number">3.5</span> Initial embedding</h2>
+<section id="initial-embedding" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="initial-embedding"><span class="header-section-number">4.5</span> Initial embedding</h2>
 <ul>
 <li>The token are first embedded in a <span class="math inline">\(d\)</span> dimensional space (see previous topic)</li>
 <li>the representation <span class="math inline">\(x_i= E w_i\)</span> is independent of context.</li>
@@ -337,8 +343,8 @@ L_{Seq2Seq} = - \sum_j \sum_{t=1}^m \sum_{c\in V} I\!\!I_{v_t^j=c} \log P(v_m^j=
 </figure>
 </div>
 </section>
-<section id="a-minimal-self-attention-architecture-for-decoder" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="a-minimal-self-attention-architecture-for-decoder"><span class="header-section-number">3.6</span> A minimal self-attention architecture for decoder</h2>
+<section id="a-minimal-self-attention-architecture-for-decoder" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="a-minimal-self-attention-architecture-for-decoder"><span class="header-section-number">4.6</span> A minimal self-attention architecture for decoder</h2>
 <p><strong>Attention is a communication mecanism</strong> between the tokens of a sequence.</p>
 <p>Self attention proposes a contextual representation <span class="math inline">\(h_i\)</span> of <span class="math inline">\(x_i\)</span> as a linear combination the sequence: <span class="math display">\[
 h_i =V . \sum_{j=1}^n \alpha_{ij}  x_j
@@ -357,8 +363,8 @@ h_i =V . \sum_{j=1}^n \alpha_{ij}  x_j
 <li><span class="math inline">\(V\)</span> is learned matrix of parameters and can be seen a projection matrix modifying the embedding of the linear combination of sequence tokens. Let consider V as a square matrix <span class="math inline">\(d\times d\)</span>.</li>
 </ul>
 </section>
-<section id="attention-and-matrix-notation" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="attention-and-matrix-notation"><span class="header-section-number">3.7</span> Attention and matrix notation</h2>
+<section id="attention-and-matrix-notation" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="attention-and-matrix-notation"><span class="header-section-number">4.7</span> Attention and matrix notation</h2>
 <ul>
 <li><span class="math inline">\(\alpha_{ij}=\text{softmax}(x_i^T Q^T K x_j) = \frac{exp(x_i^T Q^T K x_j)}{\sum_{j=1}^n \exp{\left(  x_i^T Q^T K x_j \right)}}\)</span>, where
 <ul>
@@ -368,8 +374,8 @@ h_i =V . \sum_{j=1}^n \alpha_{ij}  x_j
 </ul></li>
 </ul></li>
 </ul>
-<section id="matrix-notation" class="level3" data-number="3.7.1">
-<h3 data-number="3.7.1" class="anchored" data-anchor-id="matrix-notation"><span class="header-section-number">3.7.1</span> Matrix notation</h3>
+<section id="matrix-notation" class="level3" data-number="4.7.1">
+<h3 data-number="4.7.1" class="anchored" data-anchor-id="matrix-notation"><span class="header-section-number">4.7.1</span> Matrix notation</h3>
 <p><span class="math display">\[
 H=\begin{bmatrix}
 h_1^T \\
@@ -378,8 +384,8 @@ h_n^T
 \end{bmatrix} = \text{Attention(Q,K,V,X)}=   \text{softmax}(X (Q^T K )X^T)X V^T
 \]</span></p>
 </section>
-<section id="remark" class="level3" data-number="3.7.2">
-<h3 data-number="3.7.2" class="anchored" data-anchor-id="remark"><span class="header-section-number">3.7.2</span> Remark</h3>
+<section id="remark" class="level3" data-number="4.7.2">
+<h3 data-number="4.7.2" class="anchored" data-anchor-id="remark"><span class="header-section-number">4.7.2</span> Remark</h3>
 <p>In the original paper (“Attention is all you need”, 2017) the notation is different and notes:</p>
 <ul>
 <li><span class="math inline">\(X Q^T\)</span> as <span class="math inline">\(Q\)</span>,</li>
@@ -388,8 +394,8 @@ h_n^T
 </ul>
 </section>
 </section>
-<section id="ilustration-of-self-attention" class="level2" data-number="3.8">
-<h2 data-number="3.8" class="anchored" data-anchor-id="ilustration-of-self-attention"><span class="header-section-number">3.8</span> Ilustration of self-Attention</h2>
+<section id="ilustration-of-self-attention" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="ilustration-of-self-attention"><span class="header-section-number">4.8</span> Ilustration of self-Attention</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="../images/self-attention.jpeg" class="img-fluid figure-img"></p>
@@ -397,8 +403,8 @@ h_n^T
 </figure>
 </div>
 </section>
-<section id="interpretation-of-q-k-v" class="level2" data-number="3.9">
-<h2 data-number="3.9" class="anchored" data-anchor-id="interpretation-of-q-k-v"><span class="header-section-number">3.9</span> Interpretation of Q, K, V</h2>
+<section id="interpretation-of-q-k-v" class="level2" data-number="4.9">
+<h2 data-number="4.9" class="anchored" data-anchor-id="interpretation-of-q-k-v"><span class="header-section-number">4.9</span> Interpretation of Q, K, V</h2>
 <ul>
 <li>The query is modified version of an initial embedding <span class="math inline">\(q_i = Q x_i\)</span><br>
 </li>
@@ -432,8 +438,8 @@ h_n^T
 </tbody>
 </table>
 </section>
-<section id="important-details" class="level2" data-number="3.10">
-<h2 data-number="3.10" class="anchored" data-anchor-id="important-details"><span class="header-section-number">3.10</span> Important details</h2>
+<section id="important-details" class="level2" data-number="4.10">
+<h2 data-number="4.10" class="anchored" data-anchor-id="important-details"><span class="header-section-number">4.10</span> Important details</h2>
 <p>The original paper introduces many add-ons, which much improve the transformers performances:</p>
 <ul>
 <li><strong>Positional encoding</strong> for introducing the notion of order in the sequence</li>
@@ -454,8 +460,8 @@ h_n^T
 <li><strong>Multi-head attention</strong>: computes multiple attention functions (heads) in parallel</li>
 </ul>
 </section>
-<section id="positional-encoding" class="level2" data-number="3.11">
-<h2 data-number="3.11" class="anchored" data-anchor-id="positional-encoding"><span class="header-section-number">3.11</span> Positional encoding</h2>
+<section id="positional-encoding" class="level2" data-number="4.11">
+<h2 data-number="4.11" class="anchored" data-anchor-id="positional-encoding"><span class="header-section-number">4.11</span> Positional encoding</h2>
 <ul>
 <li>Attention do not consider order of tokens !</li>
 <li>Incorporating information about the order of tokens is achieved by adding positional encodings to the input embeddings</li>
@@ -471,14 +477,14 @@ PE_{\text{pos}, 2i+1} = \cos\left(\frac{\text{pos}}{10000^{\frac{2i}{d}}}\right)
 </ul>
 <p>It ensures that each position is assigned a unique encoding</p>
 </section>
-<section id="feed-forward-neural-network" class="level2" data-number="3.12">
-<h2 data-number="3.12" class="anchored" data-anchor-id="feed-forward-neural-network"><span class="header-section-number">3.12</span> Feed Forward Neural Network</h2>
+<section id="feed-forward-neural-network" class="level2" data-number="4.12">
+<h2 data-number="4.12" class="anchored" data-anchor-id="feed-forward-neural-network"><span class="header-section-number">4.12</span> Feed Forward Neural Network</h2>
 <ul>
 <li><strong>Attention mechanism operates linearly</strong> to capture dependencies between tokens in a sequence</li>
 <li>Non-linearity enhance the model’s expressive power</li>
 </ul>
-<section id="structure-of-the-ffn" class="level3" data-number="3.12.1">
-<h3 data-number="3.12.1" class="anchored" data-anchor-id="structure-of-the-ffn"><span class="header-section-number">3.12.1</span> Structure of the FFN:</h3>
+<section id="structure-of-the-ffn" class="level3" data-number="4.12.1">
+<h3 data-number="4.12.1" class="anchored" data-anchor-id="structure-of-the-ffn"><span class="header-section-number">4.12.1</span> Structure of the FFN:</h3>
 <p>Each FFN consists of two linear transformations with a non-linear activation function in between:</p>
 <ol type="1">
 <li>First Linear Transformation: embedding of the input from the model’s dimensionality <span class="math inline">\(d\)</span> to a higher-dimensional space</li>
@@ -491,8 +497,8 @@ PE_{\text{pos}, 2i+1} = \cos\left(\frac{\text{pos}}{10000^{\frac{2i}{d}}}\right)
 <p>where <span class="math inline">\(W_1\)</span> and <span class="math inline">\(W_2\)</span> are weight matrices, and <span class="math inline">\(b_1\)</span> and <span class="math inline">\(b_2\)</span> are bias vectors.</p>
 </section>
 </section>
-<section id="skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al." class="level2" data-number="3.13">
-<h2 data-number="3.13" class="anchored" data-anchor-id="skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al."><span class="header-section-number">3.13</span> Skip connection (original paper “Deep Residual Learning for Image Recognition” 2015 by He et al.)</h2>
+<section id="skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al." class="level2" data-number="4.13">
+<h2 data-number="4.13" class="anchored" data-anchor-id="skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al."><span class="header-section-number">4.13</span> Skip connection (original paper “Deep Residual Learning for Image Recognition” 2015 by He et al.)</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="../images/skip-connection.png" class="img-fluid figure-img" style="width:50.0%"></p>
@@ -507,16 +513,16 @@ PE_{\text{pos}, 2i+1} = \cos\left(\frac{\text{pos}}{10000^{\frac{2i}{d}}}\right)
 <p><span class="math display">\[
 y = F(x) + x
 \]</span></p>
-<section id="benefits" class="level3" data-number="3.13.1">
-<h3 data-number="3.13.1" class="anchored" data-anchor-id="benefits"><span class="header-section-number">3.13.1</span> Benefits:</h3>
+<section id="benefits" class="level3" data-number="4.13.1">
+<h3 data-number="4.13.1" class="anchored" data-anchor-id="benefits"><span class="header-section-number">4.13.1</span> Benefits:</h3>
 <ul>
 <li>Enhanced Gradient Flow</li>
 <li>Faster convergence and higher accuracy</li>
 </ul>
 </section>
 </section>
-<section id="multi-head-attention" class="level2" data-number="3.14">
-<h2 data-number="3.14" class="anchored" data-anchor-id="multi-head-attention"><span class="header-section-number">3.14</span> Multi-head attention</h2>
+<section id="multi-head-attention" class="level2" data-number="4.14">
+<h2 data-number="4.14" class="anchored" data-anchor-id="multi-head-attention"><span class="header-section-number">4.14</span> Multi-head attention</h2>
 <ul>
 <li>Multi-Head Attention captures various aspects of the data.</li>
 <li>The mechanism computes multiple attention functions (heads) in parallel.</li>
@@ -525,14 +531,14 @@ y = F(x) + x
 <p>Each head <span class="math inline">\(k\)</span> computes the attention scores <span class="math display">\[
 \text{Attention}(Q_k, K_k, V_k) = \text{softmax}\left(\frac{XQ_k^T K_kX}{\sqrt{d_k}}\right)X V_k^T
 \]</span> where <span class="math inline">\(d_k\)</span> is the dimension of the key vectors</p>
-<section id="concatenation" class="level3" data-number="3.14.1">
-<h3 data-number="3.14.1" class="anchored" data-anchor-id="concatenation"><span class="header-section-number">3.14.1</span> Concatenation</h3>
+<section id="concatenation" class="level3" data-number="4.14.1">
+<h3 data-number="4.14.1" class="anchored" data-anchor-id="concatenation"><span class="header-section-number">4.14.1</span> Concatenation</h3>
 <p>The outputs of all heads are concatenated and projected through a final linear layer: <span class="math display">\[
 \text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \ldots, \text{head}_h) P
 \]</span> The multi head matrix is <span class="math inline">\(d \times d\)</span>, where - <span class="math inline">\(h\)</span> is the number of head, - <span class="math inline">\(d_k= d/h\)</span> the size of the projection space of head k - <span class="math inline">\(P\)</span> is a projection matrix combining the heads.</p>
 </section>
-<section id="benefits-1" class="level3" data-number="3.14.2">
-<h3 data-number="3.14.2" class="anchored" data-anchor-id="benefits-1"><span class="header-section-number">3.14.2</span> Benefits</h3>
+<section id="benefits-1" class="level3" data-number="4.14.2">
+<h3 data-number="4.14.2" class="anchored" data-anchor-id="benefits-1"><span class="header-section-number">4.14.2</span> Benefits</h3>
 <ul>
 <li>Diverse Representations: Each head can capture different features or relationships within the data, enabling the model to understand various aspects of the input (grammar, style, “meaning”…).
 <ul>
@@ -542,8 +548,8 @@ y = F(x) + x
 </ul>
 </section>
 </section>
-<section id="fine-tuning" class="level2" data-number="3.15">
-<h2 data-number="3.15" class="anchored" data-anchor-id="fine-tuning"><span class="header-section-number">3.15</span> Fine tuning</h2>
+<section id="fine-tuning" class="level2" data-number="4.15">
+<h2 data-number="4.15" class="anchored" data-anchor-id="fine-tuning"><span class="header-section-number">4.15</span> Fine tuning</h2>
 <p>After a pretraining step that ressembles closely to a decoder…</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -958,13 +964,13 @@ y = F(x) + x
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../chapters/word-embedding.html" class="pagination-link" aria-label="Words and Vectors">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Words and Vectors</span></span>
+      <a href="../chapters/embedding-exercise.html" class="pagination-link" aria-label="Exercises — LSA and Word2Vec Embeddings">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Exercises — LSA and Word2Vec Embeddings</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../chapters/transformers-exercice.html" class="pagination-link" aria-label="Exercises - GPT from scratch">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Exercises - GPT from scratch</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../chapters/transformers-exercice.html" class="pagination-link" aria-label="Exercises — GPT from scratch">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Exercises — GPT from scratch</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

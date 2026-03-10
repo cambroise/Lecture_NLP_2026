@@ -1,0 +1,112 @@
+## Exercises — LSA and Word2Vec Embeddings
+
+These exercises explore two complementary approaches to building word representations:
+
+- **Latent Semantic Analysis (LSA)** — a classical count-based method using SVD on a term-document matrix
+- **Word2Vec** — a neural prediction-based method using skip-gram with negative sampling
+
+Both methods were introduced in the lecture (`word-embedding.qmd`). The practical work is in `TP/lsa_word2vec.ipynb`.
+
+## Links
+
+- [Original LSA paper](https://doi.org/10.1002/(SICI)1097-4571(199009)41:6%3C391::AID-ASI1%3E3.0.CO;2-9) — Deerwester et al. (1990)
+- [Word2Vec paper](https://arxiv.org/abs/1301.3781) — Mikolov et al. (2013)
+- [GloVe paper](https://aclanthology.org/D14-1162) — Pennington et al. (2014)
+- [Gensim documentation](https://radimrehurek.com/gensim/) — Word2Vec and pre-trained vectors
+- [Jurafsky & Martin, Chapter 6](https://web.stanford.edu/~jurafsky/slp3/) — Vector semantics and embeddings
+
+---
+
+### 1) Term-document matrix and cosine similarity
+
+**Goal:** Build a count matrix from a toy corpus and measure word similarity by cosine distance.
+
+**Key ideas**
+
+- A corpus of $D$ documents with a vocabulary of $|V|$ words defines a $|V| \times D$ term-document matrix.
+- Raw counts can be weighted (TF-IDF) to reduce the influence of frequent uninformative words.
+- Cosine similarity $\cos(\mathbf{v}, \mathbf{w}) = \frac{\mathbf{v}^T \mathbf{w}}{\|\mathbf{v}\|\|\mathbf{w}\|}$ is the standard metric between word vectors.
+
+**Exercises**
+
+1. Build the term-document matrix with `CountVectorizer`. What is its shape? How sparse is it?
+2. Switch to `TfidfVectorizer`. Which words gain weight? Which lose weight?
+3. Compute cosine similarity between pairs of words from the same topic and across topics. Do the numbers match your intuition?
+
+---
+
+### 2) Latent Semantic Analysis — SVD and latent space
+
+**Goal:** Apply Truncated SVD to reduce dimensionality and visualize the latent semantic structure.
+
+**Key ideas**
+
+- LSA factorizes the matrix $W = U \Sigma V^T$ and keeps only the top $k$ singular values: $\hat{W} = U_k \Sigma_k V_k^T$.
+- The rows of $V_k$ are document embeddings; the rows of $U_k$ (scaled by $\Sigma_k$) are word embeddings.
+- Dimensionality reduction acts as denoising: synonymous words that never co-occur in the same document become close in the latent space.
+
+**Exercises**
+
+1. Apply `TruncatedSVD` with $k=2$ and plot documents in the latent plane. Do the three topics separate cleanly?
+2. Plot the word vectors in the same plane. Which words anchor each dimension?
+3. Increase $k$ to 5 and 10. How does explained variance change? Use the document embeddings to retrieve the top-3 documents for a free-text query.
+4. **Reflection:** What does each singular value measure geometrically? Why does LSA struggle with polysemy (e.g. *star* = celebrity or astronomical object)?
+
+---
+
+### 3) Word2Vec on the toy corpus
+
+**Goal:** Train a skip-gram Word2Vec model and compare its embeddings with LSA.
+
+**Key ideas**
+
+- Word2Vec trains a binary classifier: given a (target, context) pair, predict whether the context is real or noise-sampled.
+- The objective $L = \sum_{(w,c): y=1} \log \sigma(\mathbf{c}^T \mathbf{w}) + \sum_{(w',c'): y=0} \log \sigma(-\mathbf{c'}^T \mathbf{w'})$ is maximized by gradient descent.
+- The context window $L$ controls what "context" means: small $L$ captures syntactic relations, large $L$ captures topical/semantic relations.
+
+**Exercises**
+
+1. Train Word2Vec (`sg=1`, `window=3`, `epochs=200`) on the toy corpus. Visualize the embeddings with PCA.
+2. Compare side-by-side: for the same word pairs, are Word2Vec similarities higher/lower/more discriminative than LSA?
+3. Try `sg=0` (CBOW) and `window=1` vs `window=5`. What changes in the clustering?
+4. **Reflection:** Why does Word2Vec underperform on this 18-sentence corpus? What data regime favours LSA?
+
+---
+
+### 4) Pre-trained embeddings and analogy tasks
+
+**Goal:** Load large-scale GloVe vectors and test the famous linear structure of word embeddings.
+
+**Key ideas**
+
+- Pre-trained GloVe vectors are trained on Wikipedia + Gigaword (~6 billion tokens, 400k vocabulary, 50–300 dimensions).
+- The linear analogy structure $\mathbf{king} - \mathbf{man} + \mathbf{woman} \approx \mathbf{queen}$ emerges from training at scale.
+- This structure does **not** appear in LSA or Word2Vec trained on small corpora.
+
+**Exercises**
+
+1. Load `glove-wiki-gigaword-50` with `gensim.downloader`. Solve the analogies: *king − man + woman*, *Paris − France + Italy*, *walk − walking + swimming*.
+2. Try to solve analogies with your toy LSA vectors. What happens?
+3. Find 3 word pairs where GloVe similarities agree with LSA, and 3 where they strongly disagree. What explains the disagreements?
+
+---
+
+### 5) Comparison and reflection
+
+**Goal:** Synthesise the trade-offs between LSA and Word2Vec.
+
+| Property | LSA | Word2Vec |
+|---|---|---|
+| Method | SVD on count matrix | Neural skip-gram |
+| Training | Closed-form | Gradient descent |
+| Corpus size needed | Small OK | Needs billions of words |
+| Polysemy handling | Poor (single vector) | Poor (single vector) |
+| Analogy structure | Weak | Strong at scale |
+| Interpretability | Moderate (SVD components) | Low |
+| Matrix storage | $O(\|V\| \cdot D)$ | $O(\|V\| \cdot d)$ |
+
+**Exercises**
+
+1. In which practical scenario would you choose LSA over Word2Vec? Give two concrete examples.
+2. Both methods produce a **single vector per word** regardless of context. Why is this a fundamental limitation? What architecture overcomes it? (Hint: see `chapters/transformers.qmd`.)
+3. The lecture notes describe PPMI as an alternative to raw counts before SVD. Implement PPMI weighting and compare LSA-PPMI similarity with raw-count LSA and Word2Vec.

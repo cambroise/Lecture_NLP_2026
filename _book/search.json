@@ -1,32 +1,32 @@
 [
   {
-    "objectID": "chapters/transformers-exercice.html",
-    "href": "chapters/transformers-exercice.html",
-    "title": "4  Exercises - GPT from scratch",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "NLP Lecture 2026",
     "section": "",
-    "text": "4.1 Links:\nThese exercises follow the steps of Karpathy’s “Let’s build GPT” video, aiming to build a small ChatGPT-like model from scratch.\nWe build a Generatively Pretrained Transformer (GPT), following the paper “Attention is All You Need” and OpenAI’s GPT-2 / GPT-3. We talk about connections to ChatGPT, which has taken the world by storm. We watch GitHub Copilot, itself a GPT, help us write a GPT (meta :D!) . I recommend people watch the earlier makemore videos to get comfortable with the autoregressive language modeling framework and basics of tensors and PyTorch nn, which we take for granted in this video.",
+    "text": "1 NLP Lecture 2026\nNatural Language Processing\nThis document covers the fundamentals of NLP, from word embeddings to Transformer architectures, with practical exercises based on nanoGPT.",
     "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Exercises - GPT from scratch</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>NLP Lecture 2026</span>"
     ]
   },
   {
-    "objectID": "chapters/transformers-exercice.html#links",
-    "href": "chapters/transformers-exercice.html#links",
-    "title": "4  Exercises - GPT from scratch",
-    "section": "",
-    "text": "tiny Shakespeare dataset\nGoogle colab for the video\nGitHub repo for the video\nPlaylist of the whole Zero to Hero series so far\nnanoGPT repo\nKarpathy’s website",
+    "objectID": "index.html#contents",
+    "href": "index.html#contents",
+    "title": "NLP Lecture 2026",
+    "section": "1.1 Contents",
+    "text": "1.1 Contents\n\nWord Embeddings - Word vectors, co-occurrence matrices, TF-IDF, PMI, LSA, LDA, and Word2Vec\nTransformers - Attention architecture, contextual embeddings, and language models\nExercises - Practical implementation with nanoGPT and key concepts",
     "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Exercises - GPT from scratch</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>NLP Lecture 2026</span>"
     ]
   },
   {
-    "objectID": "chapters/transformers-exercice.html#supplementary-links",
-    "href": "chapters/transformers-exercice.html#supplementary-links",
-    "title": "4  Exercises - GPT from scratch",
-    "section": "4.2 Supplementary links:",
-    "text": "4.2 Supplementary links:\n\nAttention is All You Need paper\nOpenAI GPT-3 paper\nOpenAI ChatGPT blog post\nThe GPU I’m training the model on is from Lambda GPU Cloud, I think the best and easiest way to spin up an on-demand GPU instance in the cloud that you can ssh to: Lambda Labs. If you prefer to work in notebooks, I think the easiest path today is Google Colab.\n\n\n4.2.1 1) Data and tokenizer\nGoal: Prepare a small text dataset and a tokenizer.\nNotes - Karpathy mentions tokenization choices and vocab size. - OpenAI uses ~50k token vocabulary in some models.\nSuggested references - SentencePiece (GitHub) - SentencePiece (Documentation) - tiktoken (GitHub) - OpenAI Tokenizer Tool (Interactive)\nExercises 1. Choose a dataset (tiny Shakespeare, your own corpus, etc.). 2. Compare a character-level tokenizer vs. a subword tokenizer. 3. Report vocab size, average tokens per sentence, and OOV rate.\n\n\n\n4.2.2 2) Language modeling basics\nGoal: Understand the training objective and baseline models.\nKey ideas - Bigram model - Negative log-likelihood (NLL) / cross entropy - Causal masking: the future cannot communicate with the past\nExercises 1. Implement a bigram model. 2. Compute NLL / cross entropy on a validation split. 3. Compare with random baseline.\n\n\n\n4.2.3 3) Attention mechanism\nGoal: Build intuition for attention and causal masking.\nKey ideas - Attention is a communication mechanism. - Aggregate the past using query (current position) and key (past positions). - For sentiment analysis, the attention matrix may be non-triangular. - Decoder attention uses a triangular mask (causal).\nExercises 1. Visualize attention matrices with and without causal masking. 2. Explain why causal masking is required for next-token prediction.\n\n\n\n4.2.4 4) Transformer block\nGoal: Understand the full block structure.\nComponents - Multi-head attention - Feed-forward network - Residual (skip) connections (see “Deep Residual Learning for Image Recognition”) - LayerNorm (nowadays applied before the transformation) - Dropout (“Dropout: a simple way to prevent neural networks from overfitting”)\nExercises 1. Assemble a single Transformer block. 2. Verify shape consistency across sub-layers. 3. Experiment with dropout on/off.\n\n\n\n4.2.5 5) Encoder vs decoder\nGoal: Clarify model types and masking.\nKey ideas - Decoder blocks use a triangular (causal) mask. - Encoder attention is fully visible (no causal mask). - Encoders can provide keys/values; decoder supplies queries (encoder-decoder setup).\nExercises 1. Draw the attention mask for encoder, decoder, and encoder-decoder. 2. Explain when each architecture is used.\n\n\n\n4.2.6 6) Training loop\nGoal: Train a small GPT on a dataset.\nSteps 1. Prepare train/val splits. 2. Define model hyperparameters (block size, n_layers, n_heads, d_model). 3. Train with teacher forcing and causal loss. 4. Track loss curves and sample generations.\nExercises - Compare context lengths from 1 to block size and observe quality. - Report training loss vs validation loss.\n\n\n\n4.2.7 7) Fine-tuning and evaluation\nGoal: Explore fine-tuning and downstream tasks.\nKey idea - Fine-tuning follows a pretraining step similar to decoder-only LM training.\nExercises 1. Fine-tune on a small domain dataset. 2. Evaluate with qualitative samples.",
+    "objectID": "index.html#learning-objectives",
+    "href": "index.html#learning-objectives",
+    "title": "NLP Lecture 2026",
+    "section": "1.2 Learning objectives",
+    "text": "1.2 Learning objectives\n\nUnderstand attention mechanisms and Transformers\nMaster different approaches to word embeddings\nImplement the concepts with practical code\n\n\nCourse 2026",
     "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Exercises - GPT from scratch</span>"
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>NLP Lecture 2026</span>"
     ]
   },
   {
@@ -44,7 +44,7 @@
     "href": "chapters/word-embedding.html#word-document-matrix",
     "title": "2  Words and Vectors",
     "section": "2.1 Word-document matrix",
-    "text": "2.1 Word-document matrix\nIn a Word-document matrix, each row represents a word in the vocabulary and each column represents a document from some collection of documents.\n Number of words occurence in 4 Shakespeare plays (from speech and langage processing)",
+    "text": "2.1 Word-document matrix\nIn a Word-document matrix, each row represents a word in the vocabulary and each column represents a document from some collection of documents.\nCorpus of 5 short sentences about NLP (used as a running example throughout this chapter):\n\nTerm-document matrix — S1: “word embeddings represent meaning” · S2: “deep neural networks learn representations” · S3: “language models process text” · S4: “word vectors capture context” · S5: “neural language models predict”\n\n\n\nS1\nS2\nS3\nS4\nS5\n\n\n\n\nword\n1\n0\n0\n1\n0\n\n\nembeddings\n1\n0\n0\n0\n0\n\n\nvectors\n0\n0\n0\n1\n0\n\n\nneural\n0\n1\n0\n0\n1\n\n\nlanguage\n0\n0\n1\n0\n1\n\n\nmodels\n0\n0\n1\n0\n1\n\n\ncontext\n0\n0\n0\n1\n0\n\n\nmeaning\n1\n0\n0\n0\n0\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n“embeddings” (S1) and “vectors” (S4) never appear in the same document, yet both co-occur with “word”. LSA will detect this indirect synonymy.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Words and Vectors</span>"
     ]
@@ -54,7 +54,7 @@
     "href": "chapters/word-embedding.html#word-word-matrix",
     "title": "2  Words and Vectors",
     "section": "2.2 Word-Word matrix",
-    "text": "2.2 Word-Word matrix\nIn the Word-context matrix the columns are labeled by words rather than documents.\n\neach cell records the number of times the row (target) word and the column (context) word co-occur in some context in some training corpus.\n\n\n2.2.1 Context\n\na context could be the document, in which case the cell represents the number of times the two words appear in the same document.\nsmaller contexts are common: generally a window around the word\n\n word-word matrix from a Wikipedia corpus (from speech and langage processing)",
+    "text": "2.2 Word-Word matrix\nIn the Word-context matrix the columns are labeled by words rather than documents.\n\neach cell records the number of times the row (target) word and the column (context) word co-occur in some context in some training corpus.\n\n\n2.2.1 Context\n\na context could be the document, in which case the cell represents the number of times the two words appear in the same document.\nsmaller contexts are common: generally a window around the word\n\nWord-word matrix for the same corpus (window \\(L=1\\), symmetric counts):\n\nWord-word co-occurrence matrix (window \\(L=1\\))\n\n\n\n\n\n\n\n\n\n\n\n\n\nword\nembeddings\nvectors\nrepresent\nmeaning\ncapture\ncontext\n\n\n\n\nword\n—\n1\n1\n0\n0\n0\n0\n\n\nembeddings\n1\n—\n0\n1\n0\n0\n0\n\n\nvectors\n1\n0\n—\n0\n0\n1\n0\n\n\nrepresent\n0\n1\n0\n—\n1\n0\n0\n\n\nmeaning\n0\n0\n0\n1\n—\n0\n0\n\n\ncapture\n0\n0\n1\n0\n0\n—\n1\n\n\ncontext\n0\n0\n0\n0\n0\n1\n—\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n“embeddings” and “vectors” share the same context word (“word”) → identical column profiles → cosine similarity = 1, even though they never appear in the same sentence.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Words and Vectors</span>"
     ]
@@ -84,7 +84,7 @@
     "href": "chapters/word-embedding.html#tf-idf-weigthing-terms-in-the-vector-1",
     "title": "2  Words and Vectors",
     "section": "2.5 TF-IDF: Weigthing terms in the vector",
-    "text": "2.5 TF-IDF: Weigthing terms in the vector\nThe tf-idf weighted value \\(w_{t,d}\\) for word \\(t\\) in document \\(d\\) thus combines term frequency \\(tf_{t,d}\\) with \\(idf\\): \\[\nw_{t,d} = tf_{t,d} \\times idf_t\n\\]\n A tf-idf weighted term-document matrix. Note that the tf-idf weighting has eliminated the importance of the ubiquitous word good and vastly reduced the impact of the almost-ubiquitous word fool.",
+    "text": "2.5 TF-IDF: Weigthing terms in the vector\nThe tf-idf weighted value \\(w_{t,d}\\) for word \\(t\\) in document \\(d\\) thus combines term frequency \\(tf_{t,d}\\) with \\(idf\\): \\[\nw_{t,d} = tf_{t,d} \\times idf_t\n\\]\nApplied to our running corpus (\\(N=5\\) documents):\n\nTF-IDF weighted term-document matrix — \\(\\text{tf} = \\log_{10}(1+1) = 0.30\\) for all present terms (each appears once per sentence)\n\n\n\nS1\nS2\nS3\nS4\nS5\nidf\n\n\n\n\nword\n0.12\n0\n0\n0.12\n0\n0.40\n\n\nembeddings\n0.21\n0\n0\n0\n0\n0.70\n\n\nvectors\n0\n0\n0\n0.21\n0\n0.70\n\n\nneural\n0\n0.12\n0\n0\n0.12\n0.40\n\n\nlanguage\n0\n0\n0.12\n0\n0.12\n0.40\n\n\nmodels\n0\n0\n0.12\n0\n0.12\n0.40\n\n\ncontext\n0\n0\n0\n0.21\n0\n0.70\n\n\nmeaning\n0.21\n0\n0\n0\n0\n0.70\n\n\n\nWords appearing in only one document (“embeddings”, “vectors”, “context”, “meaning”) receive the highest weight 0.21; words shared across two documents (“word”, “neural”, “language”, “models”) receive 0.12.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Words and Vectors</span>"
     ]
@@ -104,7 +104,7 @@
     "href": "chapters/word-embedding.html#positive-pmi-called-ppmi",
     "title": "2  Words and Vectors",
     "section": "2.7 Positive PMI (called PPMI)",
-    "text": "2.7 Positive PMI (called PPMI)\nNegative PMI values (which imply things are co-occurring less often than we would expect by chance) tend to be unreliable unless our corpora are enormous.\n\n2.7.1 Positive PMI\nreplaces all negative PMI values with zero (Church and Hanks 1989, Dagan et al. 1993, Niwa and Nitta 1994)\n\\[\nPPMI(w, c) = \\max(\\log_2 \\frac{P(w, c)}{P(w)P(c)} , 0)\n\\]\nA PPMI matrix showing the association between words and context words",
+    "text": "2.7 Positive PMI (called PPMI)\nNegative PMI values (which imply things are co-occurring less often than we would expect by chance) tend to be unreliable unless our corpora are enormous.\n\n2.7.1 Positive PMI\nreplaces all negative PMI values with zero (Church and Hanks 1989, Dagan et al. 1993, Niwa and Nitta 1994)\n\\[\nPPMI(w, c) = \\max(\\log_2 \\frac{P(w, c)}{P(w)P(c)} , 0)\n\\]\nApplied to our word-word matrix (16 context pairs total, window \\(L=1\\)):\n\\[\\text{PMI}(\\text{embeddings}, \\text{word}) = \\log_2 \\frac{P(\\text{emb},\\text{word})}{P(\\text{emb}) \\cdot P(\\text{word})} = \\log_2 \\frac{1/16}{(2/16)(2/16)} = \\log_2 4 = 2.0\\]\n\nPPMI matrix — all other co-occurrences have PMI \\(\\leq 0\\), set to 0 by PPMI\n\n\n\nword\nembeddings\nvectors\nrepresent\nmeaning\n\n\n\n\nword\n—\n2.0\n2.0\n0\n0\n\n\nembeddings\n2.0\n—\n0\n2.0\n0\n\n\nvectors\n2.0\n0\n—\n0\n0\n\n\nrepresent\n0\n2.0\n0\n—\n2.0\n\n\nmeaning\n0\n0\n0\n2.0\n—\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n“embeddings” and “vectors” have identical PPMI profiles: both associate with “word” only (PMI = 2.0) and with nothing else. PPMI already encodes their synonymy before any SVD.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Words and Vectors</span>"
     ]
@@ -194,7 +194,7 @@
     "href": "chapters/word-embedding.html#example-of-lda-in-action",
     "title": "2  Words and Vectors",
     "section": "2.16 Example of LDA in Action",
-    "text": "2.16 Example of LDA in Action\nCorpus of Three Documents\n\n“cats dogs pets love”\n“dogs bark loud outside”\n“politics government election law”\n\nStep 1: Identify Topics\nAfter running LDA, it may discover two topics (dist. over words): - Topic 1 (Pets): {cats, dogs, pets, bark, love} - Topic 2 (Politics): {politics, government, election, law}\nStep 2: Assign Topics to Documents\n- Document 1 -&gt; $90\\%$ Topic 1, $10\\%$ Topic 2\n- Document 2 -&gt; $80\\%$ Topic 1, $20\\%$ Topic 2\n-   Document 3 -&gt; $95\\%$ Topic 2, $5\\%$ Topic 1",
+    "text": "2.16 Example of LDA in Action\nCorpus of Three Documents\n\n“cats dogs pets love”\n“dogs bark loud outside”\n“politics government election law”\n\nStep 1: Identify Topics\nAfter running LDA, it may discover two topics (dist. over words):\n\nTopic 1 (Pets): {cats, dogs, pets, bark, love}\nTopic 2 (Politics): {politics, government, election, law}\n\nStep 2: Assign Topics to Documents\n\nDocument 1 -&gt; \\(90\\%\\) Topic 1, \\(10\\%\\) Topic 2\nDocument 2 -&gt; \\(80\\%\\) Topic 1, \\(20\\%\\) Topic 2\nDocument 3 -&gt; \\(95\\%\\) Topic 2, \\(5\\%\\) Topic 1",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Words and Vectors</span>"
     ]
@@ -240,21 +240,21 @@
     ]
   },
   {
-    "objectID": "chapters/word-embedding.html#example",
-    "href": "chapters/word-embedding.html#example",
+    "objectID": "chapters/word-embedding.html#skip-gram-training-pairs",
+    "href": "chapters/word-embedding.html#skip-gram-training-pairs",
     "title": "2  Words and Vectors",
-    "section": "2.21 Example",
-    "text": "2.21 Example\n\nThe learning algorithm for skip-gram embeddings takes as input a corpus of text\nrandom embedding vector initialization for each of the N vocabulary words\niteratively shift the embedding of each word \\(\\boldsymbol w\\) to be more like the context words\n\nLet’s start by considering a single piece of training data:\n… lemon, a [tablespoon of apricot jam, a] pinch …",
+    "section": "2.21 Skip-gram training pairs",
+    "text": "2.21 Skip-gram training pairs\nSentence: “word embeddings represent meaning” — target = embeddings, window \\(L=2\\)\nPositive pairs (real context, \\(y=1\\)):\n\n\n\ntarget\ncontext\nlabel\n\n\n\n\nembeddings\nword\n1\n\n\nembeddings\nrepresent\n1\n\n\nembeddings\nmeaning\n1\n\n\n\nNegative samples (\\(k=2\\) per positive, sampled \\(\\propto P(w)^{3/4}\\)):\n\n\n\ntarget\nnoise word\nlabel\n\n\n\n\nembeddings\nneural\n0\n\n\nembeddings\ndeep\n0\n\n\nembeddings\nprocess\n0\n\n\n\nThe model is trained to push \\(\\boldsymbol{c}_{\\text{word}}^T \\boldsymbol{w}_{\\text{emb}} \\to +\\infty\\) and \\(\\boldsymbol{c}_{\\text{neural}}^T \\boldsymbol{w}_{\\text{emb}} \\to -\\infty\\).\nAfter training on all sentences: \\(\\boldsymbol{w}_{\\text{embeddings}} \\approx \\boldsymbol{w}_{\\text{vectors}}\\) because both always appear next to “word”.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Words and Vectors</span>"
     ]
   },
   {
-    "objectID": "chapters/word-embedding.html#skip-gram-model-learns-two-separate-embeddings",
-    "href": "chapters/word-embedding.html#skip-gram-model-learns-two-separate-embeddings",
+    "objectID": "chapters/word-embedding.html#two-matrix-architecture",
+    "href": "chapters/word-embedding.html#two-matrix-architecture",
     "title": "2  Words and Vectors",
-    "section": "2.22 Skip-gram model learns two separate embeddings",
-    "text": "2.22 Skip-gram model learns two separate embeddings",
+    "section": "2.22 Two-matrix architecture",
+    "text": "2.22 Two-matrix architecture\nSkip-gram maintains two \\(|V| \\times d\\) embedding matrices:\n\\[W = \\begin{bmatrix} \\leftarrow \\boldsymbol{w}_{\\text{word}} \\rightarrow \\\\ \\leftarrow \\boldsymbol{w}_{\\text{embeddings}} \\rightarrow \\\\ \\vdots \\end{bmatrix} \\qquad C = \\begin{bmatrix} \\leftarrow \\boldsymbol{c}_{\\text{word}} \\rightarrow \\\\ \\leftarrow \\boldsymbol{c}_{\\text{embeddings}} \\rightarrow \\\\ \\vdots \\end{bmatrix}\\]\n\nTarget matrix \\(W\\): used when the word is the focus of a training pair.\nContext matrix \\(C\\): used when the word appears as context.\n\nThe logit for pair \\((w, c)\\) is a single dot product: \\(\\boldsymbol{c}^T \\boldsymbol{w}\\).\n\n\n\n\n\n\nNote\n\n\n\nThe window size \\(L\\) controls the nature of the learned similarity: \\(L \\leq 2\\) captures syntactic relations · \\(L \\geq 5\\) captures topical/semantic relations.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Words and Vectors</span>"
     ]
@@ -270,163 +270,253 @@
     ]
   },
   {
+    "objectID": "chapters/word-embedding.html#glove-from-local-windows-to-global-statistics",
+    "href": "chapters/word-embedding.html#glove-from-local-windows-to-global-statistics",
+    "title": "2  Words and Vectors",
+    "section": "2.24 GloVe: from local windows to global statistics",
+    "text": "2.24 GloVe: from local windows to global statistics\nWord2Vec learns from local context windows — each gradient step sees one (target, context) pair. The global co-occurrence structure of the corpus emerges only implicitly after many steps.\nGloVe (Pennington et al., 2014) makes global statistics explicit:\n\nBuild the full co-occurrence matrix \\(\\mathbf{X}\\) where \\(X_{ij}\\) = number of times word \\(j\\) appears in the context of word \\(i\\) across the entire corpus.\nDirectly fit word vectors to this matrix.\n\n\n\n\n\n\n\nNote\n\n\n\nOn our running corpus, \\(X_{\\text{embeddings},\\text{word}} = 1\\) and \\(X_{\\text{vectors},\\text{word}} = 1\\) — GloVe sees this symmetry globally and will assign similar vectors to both words.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Words and Vectors</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/word-embedding.html#glove-objective",
+    "href": "chapters/word-embedding.html#glove-objective",
+    "title": "2  Words and Vectors",
+    "section": "2.25 GloVe objective",
+    "text": "2.25 GloVe objective\nLearn \\(\\boldsymbol{w}_i, \\tilde{\\boldsymbol{w}}_j \\in \\mathbb{R}^d\\) and scalar biases \\(b_i, \\tilde{b}_j\\) to minimise:\n\\[J = \\sum_{i,j=1}^{|V|} f(X_{ij})\\left(\\boldsymbol{w}_i^T\\tilde{\\boldsymbol{w}}_j + b_i + \\tilde{b}_j - \\log X_{ij}\\right)^2\\]\nWeighting function — downweights rare pairs, caps frequent ones:\n\\[f(x) = \\begin{cases}(x / x_{\\max})^\\alpha & x &lt; x_{\\max} \\\\ 1 & x \\geq x_{\\max}\\end{cases} \\qquad x_{\\max}=100,\\; \\alpha=0.75\\]\nIntuition: the dot product of two word vectors should predict their log co-occurrence count: \\(\\boldsymbol{w}_i^T\\tilde{\\boldsymbol{w}}_j \\approx \\log X_{ij}\\).",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Words and Vectors</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/word-embedding.html#glove-meaning-from-co-occurrence-ratios",
+    "href": "chapters/word-embedding.html#glove-meaning-from-co-occurrence-ratios",
+    "title": "2  Words and Vectors",
+    "section": "2.26 GloVe: meaning from co-occurrence ratios",
+    "text": "2.26 GloVe: meaning from co-occurrence ratios\nThe key insight is that ratios of co-occurrence probabilities encode semantic relations:\n\n\n\n\n\\(P(k \\mid \\text{ice})\\)\n\\(P(k \\mid \\text{steam})\\)\nratio\n\n\n\n\n\\(k=\\) solid\nlarge\nsmall\n\\(\\gg 1\\)\n\n\n\\(k=\\) gas\nsmall\nlarge\n\\(\\ll 1\\)\n\n\n\\(k=\\) water\nlarge\nlarge\n\\(\\approx 1\\)\n\n\n\\(k=\\) fashion\nsmall\nsmall\n\\(\\approx 1\\)\n\n\n\nGloVe vectors encode these ratios directly: \\[\\boldsymbol{w}_i^T\\tilde{\\boldsymbol{w}}_k - \\boldsymbol{w}_j^T\\tilde{\\boldsymbol{w}}_k \\approx \\log \\frac{P(k \\mid i)}{P(k \\mid j)}\\]\nThis explains why linear analogy arithmetic (\\(\\boldsymbol{w}_{\\text{king}} - \\boldsymbol{w}_{\\text{man}} + \\boldsymbol{w}_{\\text{woman}} \\approx \\boldsymbol{w}_{\\text{queen}}\\)) works: the vector difference encodes a log probability ratio.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Words and Vectors</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/word-embedding.html#word2vec-vs-glove",
+    "href": "chapters/word-embedding.html#word2vec-vs-glove",
+    "title": "2  Words and Vectors",
+    "section": "2.27 Word2Vec vs GloVe",
+    "text": "2.27 Word2Vec vs GloVe\n\n\n\n\n\n\n\n\n\nWord2Vec (SGNS)\nGloVe\n\n\n\n\nTraining signal\nLocal windows, one pair at a time\nGlobal co-occurrence matrix \\(\\mathbf{X}\\)\n\n\nObjective\nLogistic classification\nWeighted least squares\n\n\nScalability\nStreams corpus (SGD)\nRequires building \\(\\mathbf{X}\\) first\n\n\nSmall corpora\nBetter (no need to store \\(\\mathbf{X}\\))\nWorse\n\n\nInterpretability\nImplicit\nExplicit (\\(\\log X_{ij}\\) target)\n\n\nAnalogy accuracy\nHigh\nHigh (comparable)\n\n\n\nPre-trained vectors are available for both: word2vec-google-news-300 (100B tokens), glove-wiki-gigaword-{50,100,200,300}d (6B tokens).\n\n\n\n\n\n\nImportant\n\n\n\nShared limitation: both methods produce one static vector per word regardless of context. The word bank gets the same representation whether it means a riverbank or a financial institution. Contextualised embeddings — ELMo, BERT, GPT — overcome this by making representations depend on the full sentence context.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Words and Vectors</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/embedding-exercise.html",
+    "href": "chapters/embedding-exercise.html",
+    "title": "3  Exercises — LSA and Word2Vec Embeddings",
+    "section": "",
+    "text": "3.1 Links\nThese exercises explore two complementary approaches to building word representations:\nBoth methods were introduced in the lecture (word-embedding.qmd). The practical work is in TP/lsa_word2vec.ipynb.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Exercises — LSA and Word2Vec Embeddings</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/embedding-exercise.html#links",
+    "href": "chapters/embedding-exercise.html#links",
+    "title": "3  Exercises — LSA and Word2Vec Embeddings",
+    "section": "",
+    "text": "Original LSA paper — Deerwester et al. (1990)\nWord2Vec paper — Mikolov et al. (2013)\nGloVe paper — Pennington et al. (2014)\nGensim documentation — Word2Vec and pre-trained vectors\nJurafsky & Martin, Chapter 6 — Vector semantics and embeddings\n\n\n\n3.1.1 1) Term-document matrix and cosine similarity\nGoal: Build a count matrix from a toy corpus and measure word similarity by cosine distance.\nKey ideas\n\nA corpus of \\(D\\) documents with a vocabulary of \\(|V|\\) words defines a \\(|V| \\times D\\) term-document matrix.\nRaw counts can be weighted (TF-IDF) to reduce the influence of frequent uninformative words.\nCosine similarity \\(\\cos(\\mathbf{v}, \\mathbf{w}) = \\frac{\\mathbf{v}^T \\mathbf{w}}{\\|\\mathbf{v}\\|\\|\\mathbf{w}\\|}\\) is the standard metric between word vectors.\n\nExercises\n\nBuild the term-document matrix with CountVectorizer. What is its shape? How sparse is it?\nSwitch to TfidfVectorizer. Which words gain weight? Which lose weight?\nCompute cosine similarity between pairs of words from the same topic and across topics. Do the numbers match your intuition?\n\n\n\n\n3.1.2 2) Latent Semantic Analysis — SVD and latent space\nGoal: Apply Truncated SVD to reduce dimensionality and visualize the latent semantic structure.\nKey ideas\n\nLSA factorizes the matrix \\(W = U \\Sigma V^T\\) and keeps only the top \\(k\\) singular values: \\(\\hat{W} = U_k \\Sigma_k V_k^T\\).\nThe rows of \\(V_k\\) are document embeddings; the rows of \\(U_k\\) (scaled by \\(\\Sigma_k\\)) are word embeddings.\nDimensionality reduction acts as denoising: synonymous words that never co-occur in the same document become close in the latent space.\n\nExercises\n\nApply TruncatedSVD with \\(k=2\\) and plot documents in the latent plane. Do the three topics separate cleanly?\nPlot the word vectors in the same plane. Which words anchor each dimension?\nIncrease \\(k\\) to 5 and 10. How does explained variance change? Use the document embeddings to retrieve the top-3 documents for a free-text query.\nReflection: What does each singular value measure geometrically? Why does LSA struggle with polysemy (e.g. star = celebrity or astronomical object)?\n\n\n\n\n3.1.3 3) Word2Vec on the toy corpus\nGoal: Train a skip-gram Word2Vec model and compare its embeddings with LSA.\nKey ideas\n\nWord2Vec trains a binary classifier: given a (target, context) pair, predict whether the context is real or noise-sampled.\nThe objective \\(L = \\sum_{(w,c): y=1} \\log \\sigma(\\mathbf{c}^T \\mathbf{w}) + \\sum_{(w',c'): y=0} \\log \\sigma(-\\mathbf{c'}^T \\mathbf{w'})\\) is maximized by gradient descent.\nThe context window \\(L\\) controls what “context” means: small \\(L\\) captures syntactic relations, large \\(L\\) captures topical/semantic relations.\n\nExercises\n\nTrain Word2Vec (sg=1, window=3, epochs=200) on the toy corpus. Visualize the embeddings with PCA.\nCompare side-by-side: for the same word pairs, are Word2Vec similarities higher/lower/more discriminative than LSA?\nTry sg=0 (CBOW) and window=1 vs window=5. What changes in the clustering?\nReflection: Why does Word2Vec underperform on this 18-sentence corpus? What data regime favours LSA?\n\n\n\n\n3.1.4 4) Pre-trained embeddings and analogy tasks\nGoal: Load large-scale GloVe vectors and test the famous linear structure of word embeddings.\nKey ideas\n\nPre-trained GloVe vectors are trained on Wikipedia + Gigaword (~6 billion tokens, 400k vocabulary, 50–300 dimensions).\nThe linear analogy structure \\(\\mathbf{king} - \\mathbf{man} + \\mathbf{woman} \\approx \\mathbf{queen}\\) emerges from training at scale.\nThis structure does not appear in LSA or Word2Vec trained on small corpora.\n\nExercises\n\nLoad glove-wiki-gigaword-50 with gensim.downloader. Solve the analogies: king − man + woman, Paris − France + Italy, walk − walking + swimming.\nTry to solve analogies with your toy LSA vectors. What happens?\nFind 3 word pairs where GloVe similarities agree with LSA, and 3 where they strongly disagree. What explains the disagreements?\n\n\n\n\n3.1.5 5) Comparison and reflection\nGoal: Synthesise the trade-offs between LSA and Word2Vec.\n\n\n\nProperty\nLSA\nWord2Vec\n\n\n\n\nMethod\nSVD on count matrix\nNeural skip-gram\n\n\nTraining\nClosed-form\nGradient descent\n\n\nCorpus size needed\nSmall OK\nNeeds billions of words\n\n\nPolysemy handling\nPoor (single vector)\nPoor (single vector)\n\n\nAnalogy structure\nWeak\nStrong at scale\n\n\nInterpretability\nModerate (SVD components)\nLow\n\n\nMatrix storage\n\\(O(\\|V\\| \\cdot D)\\)\n\\(O(\\|V\\| \\cdot d)\\)\n\n\n\nExercises\n\nIn which practical scenario would you choose LSA over Word2Vec? Give two concrete examples.\nBoth methods produce a single vector per word regardless of context. Why is this a fundamental limitation? What architecture overcomes it? (Hint: see chapters/transformers.qmd.)\nThe lecture notes describe PPMI as an alternative to raw counts before SVD. Implement PPMI weighting and compare LSA-PPMI similarity with raw-count LSA and Word2Vec.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Exercises — LSA and Word2Vec Embeddings</span>"
+    ]
+  },
+  {
     "objectID": "chapters/transformers.html",
     "href": "chapters/transformers.html",
-    "title": "3  The nature of transformers",
+    "title": "4  The nature of transformers",
     "section": "",
-    "text": "3.1 The nature of transformers",
+    "text": "4.1 The nature of transformers",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#the-nature-of-transformers",
     "href": "chapters/transformers.html#the-nature-of-transformers",
-    "title": "3  The nature of transformers",
+    "title": "4  The nature of transformers",
     "section": "",
-    "text": "A classical transformer is a function \\[\nT(w_{1:n}) = \\begin{bmatrix} p_1 \\\\\n\\vdots \\\\\np_{|V|}\\end{bmatrix}\n\\]\n\n\n\n\nThe nature of transformer\n\n\n\n\n\n\\(\\mathcal V\\) is a finite set (vocabulary) (Open AI uses 50,000 token as vocabulary)\n\\(w_{1:n}\\) be a sequence of token, where each \\(w_i \\in \\mathcal V\\) (In practice context varies from 1 to n, the blocksize)\n\\(p_j\\) is the probability of \\(w_{(j)}\\) the jth token in \\(\\mathcal V\\)\n\n\n3.1.1 Remarks\n\n\\(w_{1:n}\\) is usually coded a matrix of one-hot vectors with \\(w_{1:n} \\in \\mathbb{R}^{n \\times |V|}\\).\nFor classical chatbot \\(p_j = P(w_{n+1}  = w_{(j)} | w_{1:n})\\) where \\(w_{(j)}\\) is the jthe element of \\(\\mathcal V\\).",
+    "text": "A classical transformer is a function \\[\nT(w_{1:n}) = \\begin{bmatrix} p_1 \\\\\n\\vdots \\\\\np_{|V|}\\end{bmatrix}\n\\]\n\n\n\n\nThe nature of transformer\n\n\n\n\n\n\\(\\mathcal V\\) is a finite set (vocabulary) (Open AI uses 50,000 token as vocabulary)\n\\(w_{1:n}\\) be a sequence of token, where each \\(w_i \\in \\mathcal V\\) (In practice context varies from 1 to n, the blocksize)\n\\(p_j\\) is the probability of \\(w_{(j)}\\) the jth token in \\(\\mathcal V\\)\n\n\n4.1.1 Remarks\n\n\\(w_{1:n}\\) is usually coded a matrix of one-hot vectors with \\(w_{1:n} \\in \\mathbb{R}^{n \\times |V|}\\).\nFor classical chatbot \\(p_j = P(w_{n+1}  = w_{(j)} | w_{1:n})\\) where \\(w_{(j)}\\) is the jthe element of \\(\\mathcal V\\).",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#optimized-criteria",
     "href": "chapters/transformers.html#optimized-criteria",
-    "title": "3  The nature of transformers",
-    "section": "3.2 Optimized criteria",
-    "text": "3.2 Optimized criteria\nTransformers typically optimize different criteria depending on the task they are trained on.\n\n3.2.1 Causal Language Modeling (CLM) / Autoregressive Loss\n\nUsed in: GPT models\nObjective: Predict the next token given the previous tokens\n\nThe training set is a set of sequences \\((s_j)\\) of \\(n\\) tokens \\(s_j=(w_1^j, w_2^j, \\dots, w_n^j)\\):\n\\[\nL_{CLM} = -  \\sum_j\\sum_{t=1}^n \\sum_{c\\in V} I\\!\\!I_{w_t^j=c}\\log P(w_t^j=c | w_{1:t-1}^j)\n\\] where \\(w_{1:t-1}^j\\) denotes the tokens preceding position \\(t\\) in the sequence \\(j\\)\nThe criterion is a kind of pseudo log-likelihood.\nIf nothing is learned each token has the same probability of appearing: the largest possible value of the criterion is \\[\n-\\log\\frac{1}{|V|}\n\\]",
+    "title": "4  The nature of transformers",
+    "section": "4.2 Optimized criteria",
+    "text": "4.2 Optimized criteria\nTransformers typically optimize different criteria depending on the task they are trained on.\n\n4.2.1 Causal Language Modeling (CLM) / Autoregressive Loss\n\nUsed in: GPT models\nObjective: Predict the next token given the previous tokens\n\nThe training set is a set of sequences \\((s_j)\\) of \\(n\\) tokens \\(s_j=(w_1^j, w_2^j, \\dots, w_n^j)\\):\n\\[\nL_{CLM} = -  \\sum_j\\sum_{t=1}^n \\sum_{c\\in V} I\\!\\!I_{w_t^j=c}\\log P(w_t^j=c | w_{1:t-1}^j)\n\\] where \\(w_{1:t-1}^j\\) denotes the tokens preceding position \\(t\\) in the sequence \\(j\\)\nThe criterion is a kind of pseudo log-likelihood.\nIf nothing is learned each token has the same probability of appearing: the largest possible value of the criterion is \\[\n-\\log\\frac{1}{|V|}\n\\]",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#masked-language-modeling-mlm",
     "href": "chapters/transformers.html#masked-language-modeling-mlm",
-    "title": "3  The nature of transformers",
-    "section": "3.3 Masked Language Modeling (MLM)",
-    "text": "3.3 Masked Language Modeling (MLM)\n\nUsed in: BERT models\nObjective: Predict randomly masked tokens in a sentence.\n\nLet \\(M_j \\subset \\{1, \\dots, n\\}\\) be the set of masked positions in the sequence \\((s_j)\\):\n\\[\nL_{MLM} = -  \\sum_j \\sum_{t \\in M_j} \\sum_{c\\in V} I\\!\\!I_{w_t^j=c} \\log P(w_t^j=c | w^j_{(1:n)\\backslash M})\n\\]",
+    "title": "4  The nature of transformers",
+    "section": "4.3 Masked Language Modeling (MLM)",
+    "text": "4.3 Masked Language Modeling (MLM)\n\nUsed in: BERT models\nObjective: Predict randomly masked tokens in a sentence.\n\nLet \\(M_j \\subset \\{1, \\dots, n\\}\\) be the set of masked positions in the sequence \\((s_j)\\):\n\\[\nL_{MLM} = -  \\sum_j \\sum_{t \\in M_j} \\sum_{c\\in V} I\\!\\!I_{w_t^j=c} \\log P(w_t^j=c | w^j_{(1:n)\\backslash M})\n\\]",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#conditional-language-modeling-translation-loss",
     "href": "chapters/transformers.html#conditional-language-modeling-translation-loss",
-    "title": "3  The nature of transformers",
-    "section": "3.4 Conditional Language Modeling / Translation Loss",
-    "text": "3.4 Conditional Language Modeling / Translation Loss\n\nUsed in: T5, BART\nObjective: Predict an output sequence given an input sequence (e.g., translation, summarization).\n\nGiven input sequence \\(w^j = (w^j_1, \\dots, w^j_n)\\) and output sequence \\(v^j = (v^j_1, \\dots, v^j_m)\\):\n\\[\nL_{Seq2Seq} = - \\sum_j \\sum_{t=1}^m \\sum_{c\\in V} I\\!\\!I_{v_t^j=c} \\log P(v_m^j=c | v^j_{1:m-1}, w^j_{1:n})\n\\]\n\n3.4.1 Other losses\nTransformers exact objective functions depends on type of considered problems",
+    "title": "4  The nature of transformers",
+    "section": "4.4 Conditional Language Modeling / Translation Loss",
+    "text": "4.4 Conditional Language Modeling / Translation Loss\n\nUsed in: T5, BART\nObjective: Predict an output sequence given an input sequence (e.g., translation, summarization).\n\nGiven input sequence \\(w^j = (w^j_1, \\dots, w^j_n)\\) and output sequence \\(v^j = (v^j_1, \\dots, v^j_m)\\):\n\\[\nL_{Seq2Seq} = - \\sum_j \\sum_{t=1}^m \\sum_{c\\in V} I\\!\\!I_{v_t^j=c} \\log P(v_m^j=c | v^j_{1:m-1}, w^j_{1:n})\n\\]\n\n4.4.1 Other losses\nTransformers exact objective functions depends on type of considered problems",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#initial-embedding",
     "href": "chapters/transformers.html#initial-embedding",
-    "title": "3  The nature of transformers",
-    "section": "3.5 Initial embedding",
-    "text": "3.5 Initial embedding\n\nThe token are first embedded in a \\(d\\) dimensional space (see previous topic)\nthe representation \\(x_i= E w_i\\) is independent of context.\nLet \\(X= x_{1:n} = w_{1:n} E^\\top \\in \\mathbb{R}^{n \\times d}\\).\n\n\n\n\nInitial embedding",
+    "title": "4  The nature of transformers",
+    "section": "4.5 Initial embedding",
+    "text": "4.5 Initial embedding\n\nThe token are first embedded in a \\(d\\) dimensional space (see previous topic)\nthe representation \\(x_i= E w_i\\) is independent of context.\nLet \\(X= x_{1:n} = w_{1:n} E^\\top \\in \\mathbb{R}^{n \\times d}\\).\n\n\n\n\nInitial embedding",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#a-minimal-self-attention-architecture-for-decoder",
     "href": "chapters/transformers.html#a-minimal-self-attention-architecture-for-decoder",
-    "title": "3  The nature of transformers",
-    "section": "3.6 A minimal self-attention architecture for decoder",
-    "text": "3.6 A minimal self-attention architecture for decoder\nAttention is a communication mecanism between the tokens of a sequence.\nSelf attention proposes a contextual representation \\(h_i\\) of \\(x_i\\) as a linear combination the sequence: \\[\nh_i =V . \\sum_{j=1}^n \\alpha_{ij}  x_j\n\\]\n\n\\(h_i\\) aggregates the past between query (current postion i) and key (other past position j)\n\n\\(\\sum_j \\alpha_{ij}=1\\)\n\nIn decoder the future cannot communicate with the past\n\n\\(\\forall j&gt;i, \\alpha_{ij}=0\\)\n\nthe structure of the attention matrix is thus lower triangular in classical GPT decoder,\nit is not necessary to have a triangular attention matrix (i.e. sentiment analysis)\n\\(V\\) is learned matrix of parameters and can be seen a projection matrix modifying the embedding of the linear combination of sequence tokens. Let consider V as a square matrix \\(d\\times d\\).",
+    "title": "4  The nature of transformers",
+    "section": "4.6 A minimal self-attention architecture for decoder",
+    "text": "4.6 A minimal self-attention architecture for decoder\nAttention is a communication mecanism between the tokens of a sequence.\nSelf attention proposes a contextual representation \\(h_i\\) of \\(x_i\\) as a linear combination the sequence: \\[\nh_i =V . \\sum_{j=1}^n \\alpha_{ij}  x_j\n\\]\n\n\\(h_i\\) aggregates the past between query (current postion i) and key (other past position j)\n\n\\(\\sum_j \\alpha_{ij}=1\\)\n\nIn decoder the future cannot communicate with the past\n\n\\(\\forall j&gt;i, \\alpha_{ij}=0\\)\n\nthe structure of the attention matrix is thus lower triangular in classical GPT decoder,\nit is not necessary to have a triangular attention matrix (i.e. sentiment analysis)\n\\(V\\) is learned matrix of parameters and can be seen a projection matrix modifying the embedding of the linear combination of sequence tokens. Let consider V as a square matrix \\(d\\times d\\).",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#attention-and-matrix-notation",
     "href": "chapters/transformers.html#attention-and-matrix-notation",
-    "title": "3  The nature of transformers",
-    "section": "3.7 Attention and matrix notation",
-    "text": "3.7 Attention and matrix notation\n\n\\(\\alpha_{ij}=\\text{softmax}(x_i^T Q^T K x_j) = \\frac{exp(x_i^T Q^T K x_j)}{\\sum_{j=1}^n \\exp{\\left(  x_i^T Q^T K x_j \\right)}}\\), where\n\nQ is a matrix that modifies the embedding of the token we are looking for. Let consider V as a square matrix \\(d\\times d\\).\n\nK is a matrix that modifies the embedding of the word we are comparing against. Let consider V as a square matrix \\(d\\times d\\).\n\n\n\n\n3.7.1 Matrix notation\n\\[\nH=\\begin{bmatrix}\nh_1^T \\\\\n\\vdots \\\\\nh_n^T\n\\end{bmatrix} = \\text{Attention(Q,K,V,X)}=   \\text{softmax}(X (Q^T K )X^T)X V^T\n\\]\n\n\n3.7.2 Remark\nIn the original paper (“Attention is all you need”, 2017) the notation is different and notes:\n\n\\(X Q^T\\) as \\(Q\\),\n\\(X K^T\\) as \\(K\\), and\n\\(X V^T\\) as \\(V\\)",
+    "title": "4  The nature of transformers",
+    "section": "4.7 Attention and matrix notation",
+    "text": "4.7 Attention and matrix notation\n\n\\(\\alpha_{ij}=\\text{softmax}(x_i^T Q^T K x_j) = \\frac{exp(x_i^T Q^T K x_j)}{\\sum_{j=1}^n \\exp{\\left(  x_i^T Q^T K x_j \\right)}}\\), where\n\nQ is a matrix that modifies the embedding of the token we are looking for. Let consider V as a square matrix \\(d\\times d\\).\n\nK is a matrix that modifies the embedding of the word we are comparing against. Let consider V as a square matrix \\(d\\times d\\).\n\n\n\n\n4.7.1 Matrix notation\n\\[\nH=\\begin{bmatrix}\nh_1^T \\\\\n\\vdots \\\\\nh_n^T\n\\end{bmatrix} = \\text{Attention(Q,K,V,X)}=   \\text{softmax}(X (Q^T K )X^T)X V^T\n\\]\n\n\n4.7.2 Remark\nIn the original paper (“Attention is all you need”, 2017) the notation is different and notes:\n\n\\(X Q^T\\) as \\(Q\\),\n\\(X K^T\\) as \\(K\\), and\n\\(X V^T\\) as \\(V\\)",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#ilustration-of-self-attention",
     "href": "chapters/transformers.html#ilustration-of-self-attention",
-    "title": "3  The nature of transformers",
-    "section": "3.8 Ilustration of self-Attention",
-    "text": "3.8 Ilustration of self-Attention\n\n\n\nSelf-attention block in auto-encoder",
+    "title": "4  The nature of transformers",
+    "section": "4.8 Ilustration of self-Attention",
+    "text": "4.8 Ilustration of self-Attention\n\n\n\nSelf-attention block in auto-encoder",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#interpretation-of-q-k-v",
     "href": "chapters/transformers.html#interpretation-of-q-k-v",
-    "title": "3  The nature of transformers",
-    "section": "3.9 Interpretation of Q, K, V",
-    "text": "3.9 Interpretation of Q, K, V\n\nThe query is modified version of an initial embedding \\(q_i = Q x_i\\)\n\nThe Key is modified version of an initial embedding \\(k_i = K x_i\\)\nValue is modified version of an initial embedding \\(v_i = V x_i\\), which should include contextual information since it is a transformation of a linear combination of the context tokens…\n\n\n\n\n\n\n\n\nAttention Concept\nSometimes Similar to\n\n\n\n\nQuery\nTarget (What to focus on)\n\n\nKey\nContext (What to compare against, the source of information)\n\n\nValue\nContextual embedding",
+    "title": "4  The nature of transformers",
+    "section": "4.9 Interpretation of Q, K, V",
+    "text": "4.9 Interpretation of Q, K, V\n\nThe query is modified version of an initial embedding \\(q_i = Q x_i\\)\n\nThe Key is modified version of an initial embedding \\(k_i = K x_i\\)\nValue is modified version of an initial embedding \\(v_i = V x_i\\), which should include contextual information since it is a transformation of a linear combination of the context tokens…\n\n\n\n\n\n\n\n\nAttention Concept\nSometimes Similar to\n\n\n\n\nQuery\nTarget (What to focus on)\n\n\nKey\nContext (What to compare against, the source of information)\n\n\nValue\nContextual embedding",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#important-details",
     "href": "chapters/transformers.html#important-details",
-    "title": "3  The nature of transformers",
-    "section": "3.10 Important details",
-    "text": "3.10 Important details\nThe original paper introduces many add-ons, which much improve the transformers performances:\n\nPositional encoding for introducing the notion of order in the sequence\nFFN: Feed Forward Neural layer.\n\nAs the attention is a linear operation composed with a softmax, a Feed Forward Neural layer is added for making the function more flexible\n\nMulti-blocks: In the spirit of Deep learning blocks of attention and FNN are repeated…\nDropout layers are used for prevenring overfitting (from “Dropout a simple way to prevent NN from overfitting” Hinton)\nSimple trick of Skip connection for stabilizing the gradient (from “Deep learning residuals for image recognition”)\n\nThe deep learning structure tends to cause problems with gradient computation (vanishing or exploding gradient)\n\nIn order to make tokens comparable, they are all normalized at the output of each blocks:\n\nThe classical z-transformed is applied (with Bayesian correction)\n\nMulti-head attention: computes multiple attention functions (heads) in parallel",
+    "title": "4  The nature of transformers",
+    "section": "4.10 Important details",
+    "text": "4.10 Important details\nThe original paper introduces many add-ons, which much improve the transformers performances:\n\nPositional encoding for introducing the notion of order in the sequence\nFFN: Feed Forward Neural layer.\n\nAs the attention is a linear operation composed with a softmax, a Feed Forward Neural layer is added for making the function more flexible\n\nMulti-blocks: In the spirit of Deep learning blocks of attention and FNN are repeated…\nDropout layers are used for prevenring overfitting (from “Dropout a simple way to prevent NN from overfitting” Hinton)\nSimple trick of Skip connection for stabilizing the gradient (from “Deep learning residuals for image recognition”)\n\nThe deep learning structure tends to cause problems with gradient computation (vanishing or exploding gradient)\n\nIn order to make tokens comparable, they are all normalized at the output of each blocks:\n\nThe classical z-transformed is applied (with Bayesian correction)\n\nMulti-head attention: computes multiple attention functions (heads) in parallel",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#positional-encoding",
     "href": "chapters/transformers.html#positional-encoding",
-    "title": "3  The nature of transformers",
-    "section": "3.11 Positional encoding",
-    "text": "3.11 Positional encoding\n\nAttention do not consider order of tokens !\nIncorporating information about the order of tokens is achieved by adding positional encodings to the input embeddings\n\nThe original transformer implementation uses:\n\neven indices: \\[\nPE_{\\text{pos}, 2i} = \\sin\\left(\\frac{\\text{pos}}{10000^{\\frac{2i}{d}}}\\right)\n\\]\nodd indices: \\[\nPE_{\\text{pos}, 2i+1} = \\cos\\left(\\frac{\\text{pos}}{10000^{\\frac{2i}{d}}}\\right)\n\\]\n\nIt ensures that each position is assigned a unique encoding",
+    "title": "4  The nature of transformers",
+    "section": "4.11 Positional encoding",
+    "text": "4.11 Positional encoding\n\nAttention do not consider order of tokens !\nIncorporating information about the order of tokens is achieved by adding positional encodings to the input embeddings\n\nThe original transformer implementation uses:\n\neven indices: \\[\nPE_{\\text{pos}, 2i} = \\sin\\left(\\frac{\\text{pos}}{10000^{\\frac{2i}{d}}}\\right)\n\\]\nodd indices: \\[\nPE_{\\text{pos}, 2i+1} = \\cos\\left(\\frac{\\text{pos}}{10000^{\\frac{2i}{d}}}\\right)\n\\]\n\nIt ensures that each position is assigned a unique encoding",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#feed-forward-neural-network",
     "href": "chapters/transformers.html#feed-forward-neural-network",
-    "title": "3  The nature of transformers",
-    "section": "3.12 Feed Forward Neural Network",
-    "text": "3.12 Feed Forward Neural Network\n\nAttention mechanism operates linearly to capture dependencies between tokens in a sequence\nNon-linearity enhance the model’s expressive power\n\n\n3.12.1 Structure of the FFN:\nEach FFN consists of two linear transformations with a non-linear activation function in between:\n\nFirst Linear Transformation: embedding of the input from the model’s dimensionality \\(d\\) to a higher-dimensional space\nActivation Function: A non-linear function is applied to introduce non-linearity\nSecond Linear Transformation: projects the output back to the original dimensionality\n\n\\[\n\\text{FFN}(x) = W_2 \\cdot \\text{ReLU}(W_1 \\cdot x + b_1) + b_2\n\\]\nwhere \\(W_1\\) and \\(W_2\\) are weight matrices, and \\(b_1\\) and \\(b_2\\) are bias vectors.",
+    "title": "4  The nature of transformers",
+    "section": "4.12 Feed Forward Neural Network",
+    "text": "4.12 Feed Forward Neural Network\n\nAttention mechanism operates linearly to capture dependencies between tokens in a sequence\nNon-linearity enhance the model’s expressive power\n\n\n4.12.1 Structure of the FFN:\nEach FFN consists of two linear transformations with a non-linear activation function in between:\n\nFirst Linear Transformation: embedding of the input from the model’s dimensionality \\(d\\) to a higher-dimensional space\nActivation Function: A non-linear function is applied to introduce non-linearity\nSecond Linear Transformation: projects the output back to the original dimensionality\n\n\\[\n\\text{FFN}(x) = W_2 \\cdot \\text{ReLU}(W_1 \\cdot x + b_1) + b_2\n\\]\nwhere \\(W_1\\) and \\(W_2\\) are weight matrices, and \\(b_1\\) and \\(b_2\\) are bias vectors.",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al.",
     "href": "chapters/transformers.html#skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al.",
-    "title": "3  The nature of transformers",
-    "section": "3.13 Skip connection (original paper “Deep Residual Learning for Image Recognition” 2015 by He et al.)",
-    "text": "3.13 Skip connection (original paper “Deep Residual Learning for Image Recognition” 2015 by He et al.)\n\n\n\nSkip connection\n\n\nSkip connections address the vanishing (and exploding) gradient problems\n\nConsider a neural network layer with an input \\(x\\) and a desired underlying function \\(H(x)\\).\nIncorporating a skip connection, the layer is restructured to model a residual \\(F(x)= H(x)- x\\). Thus, the output of this layer becomes:\n\n\\[\ny = F(x) + x\n\\]\n\n3.13.1 Benefits:\n\nEnhanced Gradient Flow\nFaster convergence and higher accuracy",
+    "title": "4  The nature of transformers",
+    "section": "4.13 Skip connection (original paper “Deep Residual Learning for Image Recognition” 2015 by He et al.)",
+    "text": "4.13 Skip connection (original paper “Deep Residual Learning for Image Recognition” 2015 by He et al.)\n\n\n\nSkip connection\n\n\nSkip connections address the vanishing (and exploding) gradient problems\n\nConsider a neural network layer with an input \\(x\\) and a desired underlying function \\(H(x)\\).\nIncorporating a skip connection, the layer is restructured to model a residual \\(F(x)= H(x)- x\\). Thus, the output of this layer becomes:\n\n\\[\ny = F(x) + x\n\\]\n\n4.13.1 Benefits:\n\nEnhanced Gradient Flow\nFaster convergence and higher accuracy",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#multi-head-attention",
     "href": "chapters/transformers.html#multi-head-attention",
-    "title": "3  The nature of transformers",
-    "section": "3.14 Multi-head attention",
-    "text": "3.14 Multi-head attention\n\nMulti-Head Attention captures various aspects of the data.\nThe mechanism computes multiple attention functions (heads) in parallel.\nEach head operates on linearly projected versions of the queries, keys, and values\n\nEach head \\(k\\) computes the attention scores \\[\n\\text{Attention}(Q_k, K_k, V_k) = \\text{softmax}\\left(\\frac{XQ_k^T K_kX}{\\sqrt{d_k}}\\right)X V_k^T\n\\] where \\(d_k\\) is the dimension of the key vectors\n\n3.14.1 Concatenation\nThe outputs of all heads are concatenated and projected through a final linear layer: \\[\n\\text{MultiHead}(Q, K, V) = \\text{Concat}(\\text{head}_1, \\ldots, \\text{head}_h) P\n\\] The multi head matrix is \\(d \\times d\\), where - \\(h\\) is the number of head, - \\(d_k= d/h\\) the size of the projection space of head k - \\(P\\) is a projection matrix combining the heads.\n\n\n3.14.2 Benefits\n\nDiverse Representations: Each head can capture different features or relationships within the data, enabling the model to understand various aspects of the input (grammar, style, “meaning”…).\n\nParallel Processing: Multiple heads allow the model to process different parts of the sequence simultaneously, improving efficiency.\nEnhanced Capacity: By attending to information from different subspaces, the model can capture complex patterns and dependencies.",
+    "title": "4  The nature of transformers",
+    "section": "4.14 Multi-head attention",
+    "text": "4.14 Multi-head attention\n\nMulti-Head Attention captures various aspects of the data.\nThe mechanism computes multiple attention functions (heads) in parallel.\nEach head operates on linearly projected versions of the queries, keys, and values\n\nEach head \\(k\\) computes the attention scores \\[\n\\text{Attention}(Q_k, K_k, V_k) = \\text{softmax}\\left(\\frac{XQ_k^T K_kX}{\\sqrt{d_k}}\\right)X V_k^T\n\\] where \\(d_k\\) is the dimension of the key vectors\n\n4.14.1 Concatenation\nThe outputs of all heads are concatenated and projected through a final linear layer: \\[\n\\text{MultiHead}(Q, K, V) = \\text{Concat}(\\text{head}_1, \\ldots, \\text{head}_h) P\n\\] The multi head matrix is \\(d \\times d\\), where - \\(h\\) is the number of head, - \\(d_k= d/h\\) the size of the projection space of head k - \\(P\\) is a projection matrix combining the heads.\n\n\n4.14.2 Benefits\n\nDiverse Representations: Each head can capture different features or relationships within the data, enabling the model to understand various aspects of the input (grammar, style, “meaning”…).\n\nParallel Processing: Multiple heads allow the model to process different parts of the sequence simultaneously, improving efficiency.\nEnhanced Capacity: By attending to information from different subspaces, the model can capture complex patterns and dependencies.",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
     ]
   },
   {
     "objectID": "chapters/transformers.html#fine-tuning",
     "href": "chapters/transformers.html#fine-tuning",
-    "title": "3  The nature of transformers",
-    "section": "3.15 Fine tuning",
-    "text": "3.15 Fine tuning\nAfter a pretraining step that ressembles closely to a decoder…\n\n\n\nChatGPT fine tuning (from A. Karpathy lecture)",
+    "title": "4  The nature of transformers",
+    "section": "4.15 Fine tuning",
+    "text": "4.15 Fine tuning\nAfter a pretraining step that ressembles closely to a decoder…\n\n\n\nChatGPT fine tuning (from A. Karpathy lecture)",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>The nature of transformers</span>"
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The nature of transformers</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/transformers-exercice.html",
+    "href": "chapters/transformers-exercice.html",
+    "title": "5  Exercises — GPT from scratch",
+    "section": "",
+    "text": "5.1 Links\nThese exercises follow the notebook TP/gpt_dev.ipynb step by step, building a small GPT character-level language model from scratch in PyTorch, following Karpathy’s “Let’s build GPT” series.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Exercises — GPT from scratch</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/transformers-exercice.html#links",
+    "href": "chapters/transformers-exercice.html#links",
+    "title": "5  Exercises — GPT from scratch",
+    "section": "",
+    "text": "Tiny Shakespeare dataset\nGoogle Colab for the video\nGitHub repo for the video\nnanoGPT repo",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Exercises — GPT from scratch</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/transformers-exercice.html#supplementary-links",
+    "href": "chapters/transformers-exercice.html#supplementary-links",
+    "title": "5  Exercises — GPT from scratch",
+    "section": "5.2 Supplementary links",
+    "text": "5.2 Supplementary links\n\nAttention is All You Need — Vaswani et al. (2017)\nOpenAI GPT-3 paper\nOpenAI ChatGPT blog post\n\n\n\n5.2.1 1) Data preparation and character-level tokenizer\nNotebook cells: 1 – 8\nGoal: Load a raw text corpus, build a character-level vocabulary, and encode the full dataset as a sequence of integers.\nKey ideas\n\nThe tiny Shakespeare dataset contains 1,115,394 characters drawn from 65 unique characters (letters, punctuation, newlines).\nA character-level tokenizer maps each character to an integer: encode turns a string into a list of integers, decode reverses it.\nThe full corpus is stored as a torch.Tensor of dtype torch.long.\nThe data is split 90 % train / 10 % validation before any model is built.\n\nExercises\n\nPrint the vocabulary (all 65 characters). Which characters appear? Is there anything surprising?\nEncode the string \"Hello GPT\" and decode it back. Verify the round-trip.\nWhat would change if you used a word-level tokenizer instead? Estimate the new vocabulary size and the new sequence length for the same corpus.\nThe split is done at position int(0.9 * len(data)). Why is it important not to shuffle the data before splitting?\n\n\n\n\n5.2.2 2) Batch loading and the context window\nNotebook cells: 9 – 12\nGoal: Understand how a single (input, target) tensor pair encodes block_size training examples simultaneously.\nKey ideas\n\nblock_size is the maximum context length (number of tokens fed to the model at once).\nFor a sequence of length block_size + 1, there are block_size overlapping (context, target) pairs: when the input is x[:t+1], the target is x[t+1].\nget_batch samples batch_size random starting positions and stacks the corresponding windows into tensors (B, T).\n\nExercises\n\nRun get_batch('train') and print xb, yb. For the first sequence in the batch, manually list all (context, target) pairs.\nWhy does get_batch sample starting positions from range(len(data) - block_size) rather than range(len(data))?\nChange block_size to 4 and batch_size to 2 and rerun. How does this affect the number of training examples per batch?\n\n\n\n\n5.2.3 3) Bigram language model\nNotebook cells: 13 – 16\nGoal: Implement the simplest possible language model as a baseline before introducing attention.\nKey ideas\n\nA bigram model predicts the next character using only the current character: the token embedding table directly provides the logits for the next token.\nThe loss is cross-entropy between the predicted distribution and the true next character.\nAfter 100 steps of AdamW (learning rate 1e-3, batch size 32), the loss drops from ≈ 4.88 to ≈ 4.66, and the model generates readable (but random) character sequences.\nGeneration uses multinomial sampling from the softmax distribution, appending one token at a time.\n\nExercises\n\nWhat is the cross-entropy loss of a uniform random model over 65 characters? Compare with the initial loss of 4.88.\nThe generate method uses the whole sequence as context, but the bigram model only ever looks at the last token. Why is this not a problem here, but would be a problem for a Transformer?\nTrain for 1000 steps instead of 100. Does the loss continue to decrease? Generate a sample and comment on its quality.\nModify generate to use greedy decoding (argmax) instead of sampling. How does the output change?\n\n\n\n\n5.2.4 4) The mathematical trick in self-attention\nNotebook cells: 17 – 22\nGoal: Understand weighted aggregation of past tokens via matrix multiplication, the foundation of self-attention.\nKey ideas\n\nA token at position \\(t\\) should only communicate with positions \\(\\leq t\\) (causal constraint).\nThe simplest aggregation: \\(x_t^{\\text{bow}} = \\frac{1}{t}\\sum_{i \\leq t} x_i\\) (bag-of-words average).\nVersion 1 (loop): explicit for loop over positions — correct but slow.\nVersion 2 (matrix multiply): replace the loop with a lower-triangular matrix multiply. If wei is the \\((T \\times T)\\) lower-triangular matrix normalised by row, then wei @ x computes all position averages in one operation.\nVersion 3 (softmax): initialise wei = zeros, fill future positions with -inf, then apply softmax — this is exactly the uniform-attention baseline.\n\nExercises\n\nVerify that versions 1, 2 and 3 produce identical outputs using torch.allclose.\nPrint the weight matrix wei for version 2 (shape \\(T \\times T\\)). What does each row represent?\nWhat happens if you remove the masking step in version 3? What values does softmax assign to future positions?\nIn version 2, why must the rows be normalised (divided by their sum)? What would happen to the magnitude of xbow without normalisation?\n\n\n\n\n5.2.5 5) Self-attention with Query, Key and Value\nNotebook cells: 23 – 25\nGoal: Replace the uniform average with data-dependent attention weights computed from learned projections.\nKey ideas\n\nEach position produces three vectors from the input \\(x\\): a query \\(q = Qx\\) (what am I looking for?), a key \\(k = Kx\\) (what do I contain?), and a value \\(v = Vx\\) (what do I communicate?).\nAttention scores: \\(\\text{wei} = q k^T / \\sqrt{d_k}\\) — the dot product between the query at position \\(t\\) and the keys at all positions \\(\\leq t\\).\nAfter masking and softmax, the output is a weighted sum of values: \\(\\text{out} = \\text{wei} \\cdot v\\).\nSelf-attention: \\(Q\\), \\(K\\), \\(V\\) are all produced from the same source \\(x\\).\nEncoder vs decoder: removing the triangular mask gives an encoder block (all positions visible); keeping it gives a decoder block (causal, used for language modelling).\n\nExercises\n\nPrint wei[0] (attention weights for the first sequence in the batch). Verify that the upper triangle is exactly 0. Which position attends most to which?\nThe scaling factor is \\(1/\\sqrt{d_k}\\) (head_size**-0.5). Cells 26–31 show why: compute wei.var() with and without the scaling. What happens to the softmax distribution when the variance is large?\nRemove the causal mask (delete the masked_fill line). The model can now look into the future. Why is this valid for an encoder but not for a language model?\nChange head_size to 1, then to 64. How does the shape of out change?\n\n\n\n\n5.2.6 6) Scaled attention and numerical stability\nNotebook cells: 26 – 31\nGoal: Understand why the \\(1/\\sqrt{d_k}\\) scaling prevents the softmax from saturating.\nKey ideas\n\nIf \\(q\\) and \\(k\\) are unit-variance, then \\(q \\cdot k\\) has variance \\(d_k\\) — its standard deviation grows with dimension.\nWithout scaling, the dot products become large in magnitude, softmax converges to a one-hot distribution (“peaky”), and gradients vanish.\nWith scaling by \\(1/\\sqrt{d_k}\\), wei stays unit-variance regardless of head_size.\n\nExercises\n\nRun k.var(), q.var(), wei.var() before and after applying * head_size**-0.5. Confirm that scaling restores unit variance.\nCompare torch.softmax(tensor * 1, dim=-1) and torch.softmax(tensor * 8, dim=-1) for the vector [0.1, -0.2, 0.3, -0.2, 0.5]. Describe the difference.\nAt initialisation, why do we want the attention weights to be approximately uniform (not peaky)?\n\n\n\n\n5.2.7 7) Layer normalisation\nNotebook cells: 32 – 34\nGoal: Implement Layer Normalisation and understand how it differs from Batch Normalisation.\nKey ideas\n\nLayerNorm normalises each sample independently across its feature dimension (not across the batch).\nFor input \\(x\\) of shape \\((B, C)\\): \\(\\hat{x} = (x - \\mu_x) / \\sigma_x\\), then \\(\\text{out} = \\gamma \\hat{x} + \\beta\\) with learned scale \\(\\gamma\\) and shift \\(\\beta\\).\nAfter LayerNorm, x[0,:].mean() ≈ 0 and x[0,:].std() ≈ 1 for every sample.\nIn the modern Transformer (“Pre-LN”), LayerNorm is applied before attention and feed-forward (not after as in the original paper).\n\nExercises\n\nRun the LayerNorm1d example with x = torch.randn(32, 100). Verify that x[0,:].mean() and x[0,:].std() are approximately 0 and 1.\nCheck x[:,0].mean() and x[:,0].std() (one feature across the batch). Why are these not normalised?\nWhat is the difference between this and nn.BatchNorm1d? In which training scenarios does LayerNorm have an advantage?\n\n\n\n\n5.2.8 8) Full GPT implementation\nNotebook cells: 36 – 37\nGoal: Assemble all components into a complete character-level GPT and train it.\nArchitecture\nToken embedding  (vocab_size → n_embd)\nPosition embedding (block_size → n_embd)\n  └── N × Block:\n        Pre-LN → MultiHeadAttention (n_head heads of size n_embd/n_head) → residual\n        Pre-LN → FeedForward (n_embd → 4·n_embd → n_embd, ReLU) → residual\nFinal LayerNorm\nLinear projection  (n_embd → vocab_size)\nHyperparameters (notebook defaults)\n\n\n\nParameter\nValue\n\n\n\n\nbatch_size\n16\n\n\nblock_size\n32\n\n\nn_embd\n64\n\n\nn_head\n4\n\n\nn_layer\n4\n\n\nlearning_rate\n1e-3\n\n\nmax_iters\n5000\n\n\ndropout\n0.0\n\n\n\nResults: 0.21 M parameters — train loss 1.66 / val loss 1.82 after 5000 steps.\nExercises\n\nCount the parameters in each component (Head, MultiHeadAttention, FeedFoward, Block). Verify the total of 0.21 M.\nThe Block applies LayerNorm before the sub-layer (x + self.sa(self.ln1(x))). Swap to Post-LN (self.ln1(x + self.sa(x))). Does training still converge?\nSet dropout = 0.2 and retrain. Does the gap between train loss and val loss decrease?\nDouble n_embd to 128 and n_layer to 6. How many parameters does the model have now? What train/val loss do you achieve?\nTrain on a different text corpus (a novel, your own text). How does the generated output change?",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Exercises — GPT from scratch</span>"
     ]
   }
 ]

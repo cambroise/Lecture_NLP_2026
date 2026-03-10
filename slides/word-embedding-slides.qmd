@@ -1,0 +1,58 @@
+---
+title: "Word Embeddings"
+subtitle: "NLP Lecture 2026 — Traitement du Langage Naturel"
+author:
+  - name: Christophe Ambroise
+    orcid: 0000-0002-8148-0346
+    email: christophe.ambroise@univ-evry.fr
+    affiliations: UEVE, UMR CNRS 8071
+date: last-modified
+execute:
+  echo: true
+  warning: true
+  error: true
+format:
+  clean-revealjs:
+    html-math-method: mathjax
+    scrollable: true
+    transition: convex
+    embed-resources: true
+    echo: false
+
+  revealjs:
+    theme: league
+    html-math-method: mathjax
+    scrollable: true
+    transition: convex
+    embed-resources: true
+    echo: false
+
+  pdf:
+    number-sections: true
+    toc: true
+    toc-depth: 2
+    number-depth: 2
+    documentclass: scrartcl
+    mainfont: "Times New Roman"
+    fontsize: 11pt
+
+  beamer:
+    slide-level: 2
+    aspectratio: 169
+    theme: Madrid
+    colortheme: dolphin
+    header-includes: |
+      \usepackage{xcolor}
+      \definecolor{UEVEblue}{RGB}{65,89,122}
+      \definecolor{UEVEorange}{RGB}{217,97,37}
+      \setbeamercolor{frametitle}{bg=UEVEblue, fg=white}
+      \setbeamercolor{palette primary}{bg=UEVEblue,fg=white}
+      \setbeamercolor{palette secondary}{bg=UEVEblue,fg=white}
+      \setbeamercolor{palette tertiary}{bg=UEVEblue,fg=white}
+      \setbeamercolor{palette quaternary}{bg=UEVEblue,fg=white}
+      \setbeamercolor{structure}{fg=UEVEorange}
+      \setbeamercolor{section in toc}{fg=UEVEblue}
+    fonttheme: professionalfonts
+---
+
+{{< include ../chapters/word-embedding.qmd >}}

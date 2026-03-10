@@ -30,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../chapters/transformers.html" rel="next">
+<link href="../chapters/embedding-exercise.html" rel="next">
 <link href="../index.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -153,14 +153,20 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../chapters/embedding-exercise.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Exercises — LSA and Word2Vec Embeddings</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../chapters/transformers.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The nature of transformers</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The nature of transformers</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/transformers-exercice.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Exercises - GPT from scratch</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Exercises — GPT from scratch</span></span></a>
   </div>
 </li>
     </ul>
@@ -193,9 +199,13 @@ window.Quarto = {
   <li><a href="#word2vec" id="toc-word2vec" class="nav-link" data-scroll-target="#word2vec"><span class="header-section-number">2.18</span> Word2vec</a></li>
   <li><a href="#embedding-derived-from-classification" id="toc-embedding-derived-from-classification" class="nav-link" data-scroll-target="#embedding-derived-from-classification"><span class="header-section-number">2.19</span> Embedding derived from classification</a></li>
   <li><a href="#from-dot-product-to-logistic-regression" id="toc-from-dot-product-to-logistic-regression" class="nav-link" data-scroll-target="#from-dot-product-to-logistic-regression"><span class="header-section-number">2.20</span> From dot product to logistic regression</a></li>
-  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">2.21</span> Example</a></li>
-  <li><a href="#skip-gram-model-learns-two-separate-embeddings" id="toc-skip-gram-model-learns-two-separate-embeddings" class="nav-link" data-scroll-target="#skip-gram-model-learns-two-separate-embeddings"><span class="header-section-number">2.22</span> Skip-gram model learns two separate embeddings</a></li>
+  <li><a href="#skip-gram-training-pairs" id="toc-skip-gram-training-pairs" class="nav-link" data-scroll-target="#skip-gram-training-pairs"><span class="header-section-number">2.21</span> Skip-gram training pairs</a></li>
+  <li><a href="#two-matrix-architecture" id="toc-two-matrix-architecture" class="nav-link" data-scroll-target="#two-matrix-architecture"><span class="header-section-number">2.22</span> Two-matrix architecture</a></li>
   <li><a href="#final-embeddings" id="toc-final-embeddings" class="nav-link" data-scroll-target="#final-embeddings"><span class="header-section-number">2.23</span> Final embeddings</a></li>
+  <li><a href="#glove-from-local-windows-to-global-statistics" id="toc-glove-from-local-windows-to-global-statistics" class="nav-link" data-scroll-target="#glove-from-local-windows-to-global-statistics"><span class="header-section-number">2.24</span> GloVe: from local windows to global statistics</a></li>
+  <li><a href="#glove-objective" id="toc-glove-objective" class="nav-link" data-scroll-target="#glove-objective"><span class="header-section-number">2.25</span> GloVe objective</a></li>
+  <li><a href="#glove-meaning-from-co-occurrence-ratios" id="toc-glove-meaning-from-co-occurrence-ratios" class="nav-link" data-scroll-target="#glove-meaning-from-co-occurrence-ratios"><span class="header-section-number">2.26</span> GloVe: meaning from co-occurrence ratios</a></li>
+  <li><a href="#word2vec-vs-glove" id="toc-word2vec-vs-glove" class="nav-link" data-scroll-target="#word2vec-vs-glove"><span class="header-section-number">2.27</span> Word2Vec vs GloVe</a></li>
   </ul>
 </nav>
     </div>
@@ -232,7 +242,99 @@ window.Quarto = {
 <section id="word-document-matrix" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="word-document-matrix"><span class="header-section-number">2.1</span> Word-document matrix</h2>
 <p>In a Word-document matrix, each row represents a word in the vocabulary and each column represents a document from some collection of documents.</p>
-<p><img src="../images/paste-1BEDD8F0.png" class="img-fluid"> <em>Number of words occurence in 4 Shakespeare plays (from speech and langage processing)</em></p>
+<p>Corpus of 5 short sentences about NLP (used as a running example throughout this chapter):</p>
+<table class="caption-top table">
+<caption>Term-document matrix — S1: <em>“word embeddings represent meaning”</em> · S2: <em>“deep neural networks learn representations”</em> · S3: <em>“language models process text”</em> · S4: <em>“word vectors capture context”</em> · S5: <em>“neural language models predict”</em></caption>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;">S1</th>
+<th style="text-align: center;">S2</th>
+<th style="text-align: center;">S3</th>
+<th style="text-align: center;">S4</th>
+<th style="text-align: center;">S5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>word</strong></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td><strong>embeddings</strong></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td><strong>vectors</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td><strong>neural</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="odd">
+<td><strong>language</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td><strong>models</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="odd">
+<td><strong>context</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td><strong>meaning</strong></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>“embeddings” (S1) and “vectors” (S4) never appear in the same document, yet both co-occur with “word”. LSA will detect this indirect synonymy.</p>
+</div>
+</div>
 </section>
 <section id="word-word-matrix" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="word-word-matrix"><span class="header-section-number">2.2</span> Word-Word matrix</h2>
@@ -246,7 +348,117 @@ window.Quarto = {
 <li>a context could be the document, in which case the cell represents the number of times the two words appear in the same document.</li>
 <li>smaller contexts are common: generally a window around the word</li>
 </ul>
-<p><img src="../images/paste-48FC80E5.png" class="img-fluid"> <em>word-word matrix from a Wikipedia corpus (from speech and langage processing)</em></p>
+<p>Word-word matrix for the same corpus (window <span class="math inline">\(L=1\)</span>, symmetric counts):</p>
+<table class="caption-top table">
+<caption>Word-word co-occurrence matrix (window <span class="math inline">\(L=1\)</span>)</caption>
+<colgroup>
+<col style="width: 7%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;">word</th>
+<th style="text-align: center;">embeddings</th>
+<th style="text-align: center;">vectors</th>
+<th style="text-align: center;">represent</th>
+<th style="text-align: center;">meaning</th>
+<th style="text-align: center;">capture</th>
+<th style="text-align: center;">context</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>word</strong></td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td><strong>embeddings</strong></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td><strong>vectors</strong></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td><strong>represent</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td><strong>meaning</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td><strong>capture</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="odd">
+<td><strong>context</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">—</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>“embeddings” and “vectors” share the same context word (“word”) → identical column profiles → cosine similarity = 1, even though they never appear in the same sentence.</p>
+</div>
+</div>
 </section>
 </section>
 <section id="cosine-for-measuring-similarity" class="level2" data-number="2.3">
@@ -279,7 +491,96 @@ idf_t = \log_{10}\left(\frac{N}{\text{df}_t}\right)
 <p>The tf-idf weighted value <span class="math inline">\(w_{t,d}\)</span> for word <span class="math inline">\(t\)</span> in document <span class="math inline">\(d\)</span> thus combines term frequency <span class="math inline">\(tf_{t,d}\)</span> with <span class="math inline">\(idf\)</span>: <span class="math display">\[
 w_{t,d} = tf_{t,d} \times idf_t
 \]</span></p>
-<p><img src="../images/paste-F81A0994.png" class="img-fluid"> <em>A tf-idf weighted term-document matrix. Note that the tf-idf weighting has eliminated the importance of the ubiquitous word good and vastly reduced the impact of the almost-ubiquitous word fool.</em></p>
+<p>Applied to our running corpus (<span class="math inline">\(N=5\)</span> documents):</p>
+<table class="caption-top table">
+<caption>TF-IDF weighted term-document matrix — <span class="math inline">\(\text{tf} = \log_{10}(1+1) = 0.30\)</span> for all present terms (each appears once per sentence)</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;">S1</th>
+<th style="text-align: center;">S2</th>
+<th style="text-align: center;">S3</th>
+<th style="text-align: center;">S4</th>
+<th style="text-align: center;">S5</th>
+<th style="text-align: center;">idf</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>word</strong></td>
+<td style="text-align: center;">0.12</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.12</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.40</td>
+</tr>
+<tr class="even">
+<td><strong>embeddings</strong></td>
+<td style="text-align: center;"><strong>0.21</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.70</td>
+</tr>
+<tr class="odd">
+<td><strong>vectors</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><strong>0.21</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.70</td>
+</tr>
+<tr class="even">
+<td><strong>neural</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.12</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.12</td>
+<td style="text-align: center;">0.40</td>
+</tr>
+<tr class="odd">
+<td><strong>language</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.12</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.12</td>
+<td style="text-align: center;">0.40</td>
+</tr>
+<tr class="even">
+<td><strong>models</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.12</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.12</td>
+<td style="text-align: center;">0.40</td>
+</tr>
+<tr class="odd">
+<td><strong>context</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><strong>0.21</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.70</td>
+</tr>
+<tr class="even">
+<td><strong>meaning</strong></td>
+<td style="text-align: center;"><strong>0.21</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.70</td>
+</tr>
+</tbody>
+</table>
+<p>Words appearing in only one document (“embeddings”, “vectors”, “context”, “meaning”) receive the highest weight 0.21; words shared across two documents (“word”, “neural”, “language”, “models”) receive 0.12.</p>
 </section>
 <section id="pointwise-mutual-information-pmi" class="level2" data-number="2.6">
 <h2 data-number="2.6" class="anchored" data-anchor-id="pointwise-mutual-information-pmi"><span class="header-section-number">2.6</span> Pointwise Mutual Information (PMI)</h2>
@@ -301,7 +602,76 @@ PMI(w, c) = \log_2 \frac{P(w, c)}{ P(w)P(c)}
 <p><span class="math display">\[
 PPMI(w, c) = \max(\log_2 \frac{P(w, c)}{P(w)P(c)} , 0)
 \]</span></p>
-<p><img src="../images/paste-4E8CF1EE.png" class="img-fluid"><em>A PPMI matrix showing the association between words and context words</em></p>
+<p>Applied to our word-word matrix (16 context pairs total, window <span class="math inline">\(L=1\)</span>):</p>
+<p><span class="math display">\[\text{PMI}(\text{embeddings}, \text{word}) = \log_2 \frac{P(\text{emb},\text{word})}{P(\text{emb}) \cdot P(\text{word})} = \log_2 \frac{1/16}{(2/16)(2/16)} = \log_2 4 = 2.0\]</span></p>
+<table class="caption-top table">
+<caption>PPMI matrix — all other co-occurrences have PMI <span class="math inline">\(\leq 0\)</span>, set to 0 by PPMI</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;">word</th>
+<th style="text-align: center;">embeddings</th>
+<th style="text-align: center;">vectors</th>
+<th style="text-align: center;">represent</th>
+<th style="text-align: center;">meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>word</strong></td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;"><strong>2.0</strong></td>
+<td style="text-align: center;"><strong>2.0</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td><strong>embeddings</strong></td>
+<td style="text-align: center;"><strong>2.0</strong></td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><strong>2.0</strong></td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td><strong>vectors</strong></td>
+<td style="text-align: center;"><strong>2.0</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td><strong>represent</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><strong>2.0</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;"><strong>2.0</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>meaning</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><strong>2.0</strong></td>
+<td style="text-align: center;">—</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>“embeddings” and “vectors” have <strong>identical PPMI profiles</strong>: both associate with “word” only (PMI = 2.0) and with nothing else. PPMI already encodes their synonymy before any SVD.</p>
+</div>
+</div>
 </section>
 </section>
 <section id="applications-of-the-tf-idf-or-ppmi-vector-models" class="level2" data-number="2.8">
@@ -338,7 +708,6 @@ PPMI(w, c) = \max(\log_2 \frac{P(w, c)}{P(w)P(c)} , 0)
 <section id="latent-semantic-analysis" class="level2" data-number="2.10">
 <h2 data-number="2.10" class="anchored" data-anchor-id="latent-semantic-analysis"><span class="header-section-number">2.10</span> Latent Semantic Analysis</h2>
 <p>LSA uses SVD on the matrix of word-document matrix to identify the latent concepts (contexts, topics, …) that underlie the relationships between words in the corpus: <span class="math inline">\(W = U S V^T\)</span> with classical low rank approximation <span class="math inline">\(U_k S_k V_k^T\)</span></p>
-<!-- ![](../images/paste-BA498053.png) -->
 <p><img src="../images/LSA.png" class="img-fluid"></p>
 </section>
 <section id="latent-semantic-analysis-1" class="level2" data-number="2.11">
@@ -417,11 +786,17 @@ P(Z_{j,t}\mid\theta_j)P(W_{j,t}\mid\varphi_{Z_{j,t}}) ,
 <li>“politics government election law”</li>
 </ol>
 <p>Step 1: Identify Topics</p>
-<p>After running LDA, it may discover two topics (dist. over words): - Topic 1 (Pets): {cats, dogs, pets, bark, love} - Topic 2 (Politics): {politics, government, election, law}</p>
+<p>After running LDA, it may discover two topics (dist. over words):</p>
+<ul>
+<li>Topic 1 (Pets): {cats, dogs, pets, bark, love}</li>
+<li>Topic 2 (Politics): {politics, government, election, law}</li>
+</ul>
 <p>Step 2: Assign Topics to Documents</p>
-<pre><code>- Document 1 -&gt; $90\%$ Topic 1, $10\%$ Topic 2
-- Document 2 -&gt; $80\%$ Topic 1, $20\%$ Topic 2
--   Document 3 -&gt; $95\%$ Topic 2, $5\%$ Topic 1</code></pre>
+<ul>
+<li>Document 1 -&gt; <span class="math inline">\(90\%\)</span> Topic 1, <span class="math inline">\(10\%\)</span> Topic 2</li>
+<li>Document 2 -&gt; <span class="math inline">\(80\%\)</span> Topic 1, <span class="math inline">\(20\%\)</span> Topic 2</li>
+<li>Document 3 -&gt; <span class="math inline">\(95\%\)</span> Topic 2, <span class="math inline">\(5\%\)</span> Topic 1</li>
+</ul>
 </section>
 <section id="pro-and-cons" class="level2" data-number="2.17">
 <h2 data-number="2.17" class="anchored" data-anchor-id="pro-and-cons"><span class="header-section-number">2.17</span> Pro and Cons</h2>
@@ -503,20 +878,88 @@ L = \sum_{ \boldsymbol w, \boldsymbol c : y_{wc} = 1} \log P(y_{wc} = 1| \boldsy
 \]</span></p>
 </section>
 </section>
-<section id="example" class="level2" data-number="2.21">
-<h2 data-number="2.21" class="anchored" data-anchor-id="example"><span class="header-section-number">2.21</span> Example</h2>
-<ul>
-<li>The learning algorithm for skip-gram embeddings takes as input a corpus of text</li>
-<li>random embedding vector initialization for each of the N vocabulary words</li>
-<li>iteratively shift the embedding of each word <span class="math inline">\(\boldsymbol w\)</span> to be more like the context words</li>
-</ul>
-<p>Let’s start by considering a single piece of training data:</p>
-<p>… lemon, a [tablespoon of apricot jam, a] pinch …</p>
-<p><img src="../images/paste-02B7F08D.png" class="img-fluid"></p>
+<section id="skip-gram-training-pairs" class="level2" data-number="2.21">
+<h2 data-number="2.21" class="anchored" data-anchor-id="skip-gram-training-pairs"><span class="header-section-number">2.21</span> Skip-gram training pairs</h2>
+<p>Sentence: <em>“word <strong>embeddings</strong> represent meaning”</em> — target = <strong>embeddings</strong>, window <span class="math inline">\(L=2\)</span></p>
+<p><strong>Positive pairs</strong> (real context, <span class="math inline">\(y=1\)</span>):</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>target</th>
+<th>context</th>
+<th style="text-align: center;">label</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>embeddings</td>
+<td>word</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td>embeddings</td>
+<td>represent</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="odd">
+<td>embeddings</td>
+<td>meaning</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Negative samples</strong> (<span class="math inline">\(k=2\)</span> per positive, sampled <span class="math inline">\(\propto P(w)^{3/4}\)</span>):</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>target</th>
+<th>noise word</th>
+<th style="text-align: center;">label</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>embeddings</td>
+<td>neural</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td>embeddings</td>
+<td>deep</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td>embeddings</td>
+<td>process</td>
+<td style="text-align: center;">0</td>
+</tr>
+</tbody>
+</table>
+<p>The model is trained to push <span class="math inline">\(\boldsymbol{c}_{\text{word}}^T \boldsymbol{w}_{\text{emb}} \to +\infty\)</span> and <span class="math inline">\(\boldsymbol{c}_{\text{neural}}^T \boldsymbol{w}_{\text{emb}} \to -\infty\)</span>.</p>
+<p>After training on all sentences: <span class="math inline">\(\boldsymbol{w}_{\text{embeddings}} \approx \boldsymbol{w}_{\text{vectors}}\)</span> because both always appear next to “word”.</p>
 </section>
-<section id="skip-gram-model-learns-two-separate-embeddings" class="level2" data-number="2.22">
-<h2 data-number="2.22" class="anchored" data-anchor-id="skip-gram-model-learns-two-separate-embeddings"><span class="header-section-number">2.22</span> Skip-gram model learns two separate embeddings</h2>
-<p><img src="../images/paste-14C45962.png" class="img-fluid"></p>
+<section id="two-matrix-architecture" class="level2" data-number="2.22">
+<h2 data-number="2.22" class="anchored" data-anchor-id="two-matrix-architecture"><span class="header-section-number">2.22</span> Two-matrix architecture</h2>
+<p>Skip-gram maintains two <span class="math inline">\(|V| \times d\)</span> embedding matrices:</p>
+<p><span class="math display">\[W = \begin{bmatrix} \leftarrow \boldsymbol{w}_{\text{word}} \rightarrow \\ \leftarrow \boldsymbol{w}_{\text{embeddings}} \rightarrow \\ \vdots \end{bmatrix} \qquad C = \begin{bmatrix} \leftarrow \boldsymbol{c}_{\text{word}} \rightarrow \\ \leftarrow \boldsymbol{c}_{\text{embeddings}} \rightarrow \\ \vdots \end{bmatrix}\]</span></p>
+<ul>
+<li><strong>Target matrix <span class="math inline">\(W\)</span></strong>: used when the word is the focus of a training pair.</li>
+<li><strong>Context matrix <span class="math inline">\(C\)</span></strong>: used when the word appears as context.</li>
+</ul>
+<p>The logit for pair <span class="math inline">\((w, c)\)</span> is a single dot product: <span class="math inline">\(\boldsymbol{c}^T \boldsymbol{w}\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The window size <span class="math inline">\(L\)</span> controls the nature of the learned similarity: <span class="math inline">\(L \leq 2\)</span> captures syntactic relations · <span class="math inline">\(L \geq 5\)</span> captures topical/semantic relations.</p>
+</div>
+</div>
 </section>
 <section id="final-embeddings" class="level2" data-number="2.23">
 <h2 data-number="2.23" class="anchored" data-anchor-id="final-embeddings"><span class="header-section-number">2.23</span> Final embeddings</h2>
@@ -526,6 +969,141 @@ L = \sum_{ \boldsymbol w, \boldsymbol c : y_{wc} = 1} \log P(y_{wc} = 1| \boldsy
 <li>Alternatively we can throw away the C matrix and just represent each word i by the vector <span class="math inline">\(\boldsymbol w_i\)</span>.</li>
 <li>As with the simple count-based methods like tf-idf, the context window size L affects the performance of skip-gram embeddings, and experiments often tune the parameter L on a devset.</li>
 </ul>
+</section>
+<section id="glove-from-local-windows-to-global-statistics" class="level2" data-number="2.24">
+<h2 data-number="2.24" class="anchored" data-anchor-id="glove-from-local-windows-to-global-statistics"><span class="header-section-number">2.24</span> GloVe: from local windows to global statistics</h2>
+<p><strong>Word2Vec</strong> learns from local context windows — each gradient step sees one (target, context) pair. The global co-occurrence structure of the corpus emerges only implicitly after many steps.</p>
+<p><strong>GloVe</strong> (Pennington et al., 2014) makes global statistics <em>explicit</em>:</p>
+<ol type="1">
+<li>Build the full co-occurrence matrix <span class="math inline">\(\mathbf{X}\)</span> where <span class="math inline">\(X_{ij}\)</span> = number of times word <span class="math inline">\(j\)</span> appears in the context of word <span class="math inline">\(i\)</span> across the entire corpus.</li>
+<li>Directly fit word vectors to this matrix.</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>On our running corpus, <span class="math inline">\(X_{\text{embeddings},\text{word}} = 1\)</span> and <span class="math inline">\(X_{\text{vectors},\text{word}} = 1\)</span> — GloVe sees this symmetry globally and will assign similar vectors to both words.</p>
+</div>
+</div>
+</section>
+<section id="glove-objective" class="level2" data-number="2.25">
+<h2 data-number="2.25" class="anchored" data-anchor-id="glove-objective"><span class="header-section-number">2.25</span> GloVe objective</h2>
+<p>Learn <span class="math inline">\(\boldsymbol{w}_i, \tilde{\boldsymbol{w}}_j \in \mathbb{R}^d\)</span> and scalar biases <span class="math inline">\(b_i, \tilde{b}_j\)</span> to minimise:</p>
+<p><span class="math display">\[J = \sum_{i,j=1}^{|V|} f(X_{ij})\left(\boldsymbol{w}_i^T\tilde{\boldsymbol{w}}_j + b_i + \tilde{b}_j - \log X_{ij}\right)^2\]</span></p>
+<p><strong>Weighting function</strong> — downweights rare pairs, caps frequent ones:</p>
+<p><span class="math display">\[f(x) = \begin{cases}(x / x_{\max})^\alpha &amp; x &lt; x_{\max} \\ 1 &amp; x \geq x_{\max}\end{cases} \qquad x_{\max}=100,\; \alpha=0.75\]</span></p>
+<p><strong>Intuition</strong>: the dot product of two word vectors should predict their log co-occurrence count: <span class="math inline">\(\boldsymbol{w}_i^T\tilde{\boldsymbol{w}}_j \approx \log X_{ij}\)</span>.</p>
+</section>
+<section id="glove-meaning-from-co-occurrence-ratios" class="level2" data-number="2.26">
+<h2 data-number="2.26" class="anchored" data-anchor-id="glove-meaning-from-co-occurrence-ratios"><span class="header-section-number">2.26</span> GloVe: meaning from co-occurrence ratios</h2>
+<p>The key insight is that <strong>ratios</strong> of co-occurrence probabilities encode semantic relations:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;"><span class="math inline">\(P(k \mid \text{ice})\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(P(k \mid \text{steam})\)</span></th>
+<th style="text-align: center;">ratio</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(k=\)</span> solid</td>
+<td style="text-align: center;">large</td>
+<td style="text-align: center;">small</td>
+<td style="text-align: center;"><span class="math inline">\(\gg 1\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(k=\)</span> gas</td>
+<td style="text-align: center;">small</td>
+<td style="text-align: center;">large</td>
+<td style="text-align: center;"><span class="math inline">\(\ll 1\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(k=\)</span> water</td>
+<td style="text-align: center;">large</td>
+<td style="text-align: center;">large</td>
+<td style="text-align: center;"><span class="math inline">\(\approx 1\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(k=\)</span> fashion</td>
+<td style="text-align: center;">small</td>
+<td style="text-align: center;">small</td>
+<td style="text-align: center;"><span class="math inline">\(\approx 1\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>GloVe vectors encode these ratios directly: <span class="math display">\[\boldsymbol{w}_i^T\tilde{\boldsymbol{w}}_k - \boldsymbol{w}_j^T\tilde{\boldsymbol{w}}_k \approx \log \frac{P(k \mid i)}{P(k \mid j)}\]</span></p>
+<p>This explains why linear analogy arithmetic (<span class="math inline">\(\boldsymbol{w}_{\text{king}} - \boldsymbol{w}_{\text{man}} + \boldsymbol{w}_{\text{woman}} \approx \boldsymbol{w}_{\text{queen}}\)</span>) works: the vector difference encodes a log probability ratio.</p>
+</section>
+<section id="word2vec-vs-glove" class="level2" data-number="2.27">
+<h2 data-number="2.27" class="anchored" data-anchor-id="word2vec-vs-glove"><span class="header-section-number">2.27</span> Word2Vec vs GloVe</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Word2Vec (SGNS)</th>
+<th>GloVe</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Training signal</td>
+<td>Local windows, one pair at a time</td>
+<td>Global co-occurrence matrix <span class="math inline">\(\mathbf{X}\)</span></td>
+</tr>
+<tr class="even">
+<td>Objective</td>
+<td>Logistic classification</td>
+<td>Weighted least squares</td>
+</tr>
+<tr class="odd">
+<td>Scalability</td>
+<td>Streams corpus (SGD)</td>
+<td>Requires building <span class="math inline">\(\mathbf{X}\)</span> first</td>
+</tr>
+<tr class="even">
+<td>Small corpora</td>
+<td>Better (no need to store <span class="math inline">\(\mathbf{X}\)</span>)</td>
+<td>Worse</td>
+</tr>
+<tr class="odd">
+<td>Interpretability</td>
+<td>Implicit</td>
+<td>Explicit (<span class="math inline">\(\log X_{ij}\)</span> target)</td>
+</tr>
+<tr class="even">
+<td>Analogy accuracy</td>
+<td>High</td>
+<td>High (comparable)</td>
+</tr>
+</tbody>
+</table>
+<p>Pre-trained vectors are available for both: <code>word2vec-google-news-300</code> (100B tokens), <code>glove-wiki-gigaword-{50,100,200,300}d</code> (6B tokens).</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Shared limitation</strong>: both methods produce <strong>one static vector per word</strong> regardless of context. The word <em>bank</em> gets the same representation whether it means a riverbank or a financial institution. Contextualised embeddings — ELMo, BERT, GPT — overcome this by making representations depend on the full sentence context.</p>
+</div>
+</div>
 
 
 </section>
@@ -938,8 +1516,8 @@ L = \sum_{ \boldsymbol w, \boldsymbol c : y_{wc} = 1} \log P(y_{wc} = 1| \boldsy
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../chapters/transformers.html" class="pagination-link" aria-label="The nature of transformers">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The nature of transformers</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../chapters/embedding-exercise.html" class="pagination-link" aria-label="Exercises — LSA and Word2Vec Embeddings">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Exercises — LSA and Word2Vec Embeddings</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

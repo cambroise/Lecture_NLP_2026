@@ -11,7 +11,24 @@ Vector or distributional models of meaning are generally based on a co-occurrenc
 
 In a Word-document matrix, each row represents a word in the vocabulary and each column represents a document from some collection of documents.
 
-![](../images/paste-1BEDD8F0.png) *Number of words occurence in 4 Shakespeare plays (from speech and langage processing)*
+Corpus of 5 short sentences about NLP (used as a running example throughout this chapter):
+
+| | S1 | S2 | S3 | S4 | S5 |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **word** | 1 | 0 | 0 | 1 | 0 |
+| **embeddings** | 1 | 0 | 0 | 0 | 0 |
+| **vectors** | 0 | 0 | 0 | 1 | 0 |
+| **neural** | 0 | 1 | 0 | 0 | 1 |
+| **language** | 0 | 0 | 1 | 0 | 1 |
+| **models** | 0 | 0 | 1 | 0 | 1 |
+| **context** | 0 | 0 | 0 | 1 | 0 |
+| **meaning** | 1 | 0 | 0 | 0 | 0 |
+
+: Term-document matrix — S1: *"word embeddings represent meaning"* · S2: *"deep neural networks learn representations"* · S3: *"language models process text"* · S4: *"word vectors capture context"* · S5: *"neural language models predict"*
+
+::: {.callout-note}
+"embeddings" (S1) and "vectors" (S4) never appear in the same document, yet both co-occur with "word". LSA will detect this indirect synonymy.
+:::
 
 ## Word-Word matrix
 
@@ -24,7 +41,23 @@ In the Word-context matrix the columns are labeled by words rather than document
 -   a context could be the document, in which case the cell represents the number of times the two words appear in the same document.
 -   smaller contexts are common: generally a window around the word
 
-![](../images/paste-48FC80E5.png) *word-word matrix from a Wikipedia corpus (from speech and langage processing)*
+Word-word matrix for the same corpus (window $L=1$, symmetric counts):
+
+| | word | embeddings | vectors | represent | meaning | capture | context |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **word** | — | 1 | 1 | 0 | 0 | 0 | 0 |
+| **embeddings** | 1 | — | 0 | 1 | 0 | 0 | 0 |
+| **vectors** | 1 | 0 | — | 0 | 0 | 1 | 0 |
+| **represent** | 0 | 1 | 0 | — | 1 | 0 | 0 |
+| **meaning** | 0 | 0 | 0 | 1 | — | 0 | 0 |
+| **capture** | 0 | 0 | 1 | 0 | 0 | — | 1 |
+| **context** | 0 | 0 | 0 | 0 | 0 | 1 | — |
+
+: Word-word co-occurrence matrix (window $L=1$)
+
+::: {.callout-note}
+"embeddings" and "vectors" share the same context word ("word") → identical column profiles → cosine similarity = 1, even though they never appear in the same sentence.
+:::
 
 ## Cosine for measuring similarity
 
@@ -55,7 +88,22 @@ The tf-idf weighted value $w_{t,d}$ for word $t$ in document $d$ thus combines t
 w_{t,d} = tf_{t,d} \times idf_t
 $$
 
-![](../images/paste-F81A0994.png) *A tf-idf weighted term-document matrix. Note that the tf-idf weighting has eliminated the importance of the ubiquitous word good and vastly reduced the impact of the almost-ubiquitous word fool.*
+Applied to our running corpus ($N=5$ documents):
+
+| | S1 | S2 | S3 | S4 | S5 | idf |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **word** | 0.12 | 0 | 0 | 0.12 | 0 | 0.40 |
+| **embeddings** | **0.21** | 0 | 0 | 0 | 0 | 0.70 |
+| **vectors** | 0 | 0 | 0 | **0.21** | 0 | 0.70 |
+| **neural** | 0 | 0.12 | 0 | 0 | 0.12 | 0.40 |
+| **language** | 0 | 0 | 0.12 | 0 | 0.12 | 0.40 |
+| **models** | 0 | 0 | 0.12 | 0 | 0.12 | 0.40 |
+| **context** | 0 | 0 | 0 | **0.21** | 0 | 0.70 |
+| **meaning** | **0.21** | 0 | 0 | 0 | 0 | 0.70 |
+
+: TF-IDF weighted term-document matrix — $\text{tf} = \log_{10}(1+1) = 0.30$ for all present terms (each appears once per sentence)
+
+Words appearing in only one document ("embeddings", "vectors", "context", "meaning") receive the highest weight 0.21; words shared across two documents ("word", "neural", "language", "models") receive 0.12.
 
 ## Pointwise Mutual Information (PMI)
 
@@ -80,7 +128,23 @@ $$
 PPMI(w, c) = \max(\log_2 \frac{P(w, c)}{P(w)P(c)} , 0) 
 $$
 
-![](../images/paste-4E8CF1EE.png)*A PPMI matrix showing the association between words and context words*
+Applied to our word-word matrix (16 context pairs total, window $L=1$):
+
+$$\text{PMI}(\text{embeddings}, \text{word}) = \log_2 \frac{P(\text{emb},\text{word})}{P(\text{emb}) \cdot P(\text{word})} = \log_2 \frac{1/16}{(2/16)(2/16)} = \log_2 4 = 2.0$$
+
+| | word | embeddings | vectors | represent | meaning |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **word** | — | **2.0** | **2.0** | 0 | 0 |
+| **embeddings** | **2.0** | — | 0 | **2.0** | 0 |
+| **vectors** | **2.0** | 0 | — | 0 | 0 |
+| **represent** | 0 | **2.0** | 0 | — | **2.0** |
+| **meaning** | 0 | 0 | 0 | **2.0** | — |
+
+: PPMI matrix — all other co-occurrences have PMI $\leq 0$, set to 0 by PPMI
+
+::: {.callout-note}
+"embeddings" and "vectors" have **identical PPMI profiles**: both associate with "word" only (PMI = 2.0) and with nothing else. PPMI already encodes their synonymy before any SVD.
+:::
 
 ## Applications of the tf-idf or PPMI vector models
 
@@ -110,8 +174,6 @@ LSA uses singular value decomposition (SVD) to identify latent, or hidden, patte
 ## Latent Semantic Analysis
 
 LSA uses SVD on the matrix of word-document matrix to identify the latent concepts (contexts, topics, ...) that underlie the relationships between words in the corpus: $W = U S V^T$ with classical low rank approximation $U_k S_k V_k^T$
-
-<!-- ![](../images/paste-BA498053.png) -->
 
 
 ![](../images/LSA.png)
@@ -215,14 +277,15 @@ Corpus of Three Documents
 Step 1: Identify Topics
 
 After running LDA, it may discover two topics (dist. over words):
-	-	Topic 1 (Pets): {cats, dogs, pets, bark, love}
-	-	Topic 2 (Politics): {politics, government, election, law}
+
+-	Topic 1 (Pets): {cats, dogs, pets, bark, love}
+-	Topic 2 (Politics): {politics, government, election, law}
 
 Step 2: Assign Topics to Documents
 
-	- Document 1 -> $90\%$ Topic 1, $10\%$ Topic 2
-	- Document 2 -> $80\%$ Topic 1, $20\%$ Topic 2
-	- 	Document 3 -> $95\%$ Topic 2, $5\%$ Topic 1
+- Document 1 -> $90\%$ Topic 1, $10\%$ Topic 2
+- Document 2 -> $80\%$ Topic 1, $20\%$ Topic 2
+- Document 3 -> $95\%$ Topic 2, $5\%$ Topic 1
 
 ## Pro and Cons
 
@@ -294,21 +357,46 @@ $$
 L = \sum_{ \boldsymbol w, \boldsymbol c : y_{wc} = 1} \log P(y_{wc} = 1| \boldsymbol w, \boldsymbol c)  + \sum_{ \boldsymbol w', \boldsymbol c' : y_{w'c'} = 0} \log P(y_{w'c'} = 0 | \boldsymbol w', \boldsymbol c')
 $$
 
-## Example
+## Skip-gram training pairs
 
--   The learning algorithm for skip-gram embeddings takes as input a corpus of text
--   random embedding vector initialization for each of the N vocabulary words
--   iteratively shift the embedding of each word $\boldsymbol w$ to be more like the context words
+Sentence: *"word **embeddings** represent meaning"* — target = **embeddings**, window $L=2$
 
-Let's start by considering a single piece of training data:
+**Positive pairs** (real context, $y=1$):
 
-... lemon, a [tablespoon of apricot jam, a] pinch ...
+| target | context | label |
+|---|---|:---:|
+| embeddings | word | 1 |
+| embeddings | represent | 1 |
+| embeddings | meaning | 1 |
 
-![](../images/paste-02B7F08D.png)
+**Negative samples** ($k=2$ per positive, sampled $\propto P(w)^{3/4}$):
 
-## Skip-gram model learns two separate embeddings
+| target | noise word | label |
+|---|---|:---:|
+| embeddings | neural | 0 |
+| embeddings | deep | 0 |
+| embeddings | process | 0 |
 
-![](../images/paste-14C45962.png)
+The model is trained to push $\boldsymbol{c}_{\text{word}}^T \boldsymbol{w}_{\text{emb}} \to +\infty$
+and $\boldsymbol{c}_{\text{neural}}^T \boldsymbol{w}_{\text{emb}} \to -\infty$.
+
+After training on all sentences: $\boldsymbol{w}_{\text{embeddings}} \approx \boldsymbol{w}_{\text{vectors}}$ because both always appear next to "word".
+
+## Two-matrix architecture
+
+Skip-gram maintains two $|V| \times d$ embedding matrices:
+
+$$W = \begin{bmatrix} \leftarrow \boldsymbol{w}_{\text{word}} \rightarrow \\ \leftarrow \boldsymbol{w}_{\text{embeddings}} \rightarrow \\ \vdots \end{bmatrix} \qquad C = \begin{bmatrix} \leftarrow \boldsymbol{c}_{\text{word}} \rightarrow \\ \leftarrow \boldsymbol{c}_{\text{embeddings}} \rightarrow \\ \vdots \end{bmatrix}$$
+
+-   **Target matrix $W$**: used when the word is the focus of a training pair.
+-   **Context matrix $C$**: used when the word appears as context.
+
+The logit for pair $(w, c)$ is a single dot product: $\boldsymbol{c}^T \boldsymbol{w}$.
+
+::: {.callout-note}
+The window size $L$ controls the nature of the learned similarity:
+$L \leq 2$ captures syntactic relations · $L \geq 5$ captures topical/semantic relations.
+:::
 
 ## Final embeddings
 
@@ -316,3 +404,61 @@ Let's start by considering a single piece of training data:
 -   It's common to just add them together, representing word i with the vector $\boldsymbol w_i + \boldsymbol c_i$.
 -   Alternatively we can throw away the C matrix and just represent each word i by the vector $\boldsymbol w_i$.
 -   As with the simple count-based methods like tf-idf, the context window size L affects the performance of skip-gram embeddings, and experiments often tune the parameter L on a devset.
+
+## GloVe: from local windows to global statistics
+
+**Word2Vec** learns from local context windows — each gradient step sees one (target, context) pair. The global co-occurrence structure of the corpus emerges only implicitly after many steps.
+
+**GloVe** (Pennington et al., 2014) makes global statistics *explicit*:
+
+1. Build the full co-occurrence matrix $\mathbf{X}$ where $X_{ij}$ = number of times word $j$ appears in the context of word $i$ across the entire corpus.
+2. Directly fit word vectors to this matrix.
+
+::: {.callout-note}
+On our running corpus, $X_{\text{embeddings},\text{word}} = 1$ and $X_{\text{vectors},\text{word}} = 1$ — GloVe sees this symmetry globally and will assign similar vectors to both words.
+:::
+
+## GloVe objective
+
+Learn $\boldsymbol{w}_i, \tilde{\boldsymbol{w}}_j \in \mathbb{R}^d$ and scalar biases $b_i, \tilde{b}_j$ to minimise:
+
+$$J = \sum_{i,j=1}^{|V|} f(X_{ij})\left(\boldsymbol{w}_i^T\tilde{\boldsymbol{w}}_j + b_i + \tilde{b}_j - \log X_{ij}\right)^2$$
+
+**Weighting function** — downweights rare pairs, caps frequent ones:
+
+$$f(x) = \begin{cases}(x / x_{\max})^\alpha & x < x_{\max} \\ 1 & x \geq x_{\max}\end{cases} \qquad x_{\max}=100,\; \alpha=0.75$$
+
+**Intuition**: the dot product of two word vectors should predict their log co-occurrence count: $\boldsymbol{w}_i^T\tilde{\boldsymbol{w}}_j \approx \log X_{ij}$.
+
+## GloVe: meaning from co-occurrence ratios
+
+The key insight is that **ratios** of co-occurrence probabilities encode semantic relations:
+
+| | $P(k \mid \text{ice})$ | $P(k \mid \text{steam})$ | ratio |
+|---|:---:|:---:|:---:|
+| $k=$ solid | large | small | $\gg 1$ |
+| $k=$ gas | small | large | $\ll 1$ |
+| $k=$ water | large | large | $\approx 1$ |
+| $k=$ fashion | small | small | $\approx 1$ |
+
+GloVe vectors encode these ratios directly:
+$$\boldsymbol{w}_i^T\tilde{\boldsymbol{w}}_k - \boldsymbol{w}_j^T\tilde{\boldsymbol{w}}_k \approx \log \frac{P(k \mid i)}{P(k \mid j)}$$
+
+This explains why linear analogy arithmetic ($\boldsymbol{w}_{\text{king}} - \boldsymbol{w}_{\text{man}} + \boldsymbol{w}_{\text{woman}} \approx \boldsymbol{w}_{\text{queen}}$) works: the vector difference encodes a log probability ratio.
+
+## Word2Vec vs GloVe
+
+| | Word2Vec (SGNS) | GloVe |
+|---|---|---|
+| Training signal | Local windows, one pair at a time | Global co-occurrence matrix $\mathbf{X}$ |
+| Objective | Logistic classification | Weighted least squares |
+| Scalability | Streams corpus (SGD) | Requires building $\mathbf{X}$ first |
+| Small corpora | Better (no need to store $\mathbf{X}$) | Worse |
+| Interpretability | Implicit | Explicit ($\log X_{ij}$ target) |
+| Analogy accuracy | High | High (comparable) |
+
+Pre-trained vectors are available for both: `word2vec-google-news-300` (100B tokens), `glove-wiki-gigaword-{50,100,200,300}d` (6B tokens).
+
+::: {.callout-important}
+**Shared limitation**: both methods produce **one static vector per word** regardless of context. The word *bank* gets the same representation whether it means a riverbank or a financial institution. Contextualised embeddings — ELMo, BERT, GPT — overcome this by making representations depend on the full sentence context.
+:::
