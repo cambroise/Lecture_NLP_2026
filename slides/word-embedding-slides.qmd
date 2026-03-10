@@ -26,6 +26,11 @@ format:
     transition: convex
     embed-resources: true
     echo: false
+    width: 2400
+    height: 1350
+    margin: 0.1
+    min-scale: 0.2
+    max-scale: 2.0
 
   pdf:
     number-sections: true
