@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; The nature of transformers – NLP Lecture 2026</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/transformers-exercice.html" rel="next">
+<link href="../chapters/word-embedding.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-25a4e8620ae17d49cd0c3861fdf92567.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/transformers.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The nature of transformers</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">NLP Lecture 2026</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">NLP Lecture 2026</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/word-embedding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Words and Vectors</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/transformers.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The nature of transformers</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/transformers-exercice.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Exercises - GPT from scratch</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#the-nature-of-transformers" id="toc-the-nature-of-transformers" class="nav-link active" data-scroll-target="#the-nature-of-transformers"><span class="header-section-number">3.1</span> The nature of transformers</a></li>
+  <li><a href="#optimized-criteria" id="toc-optimized-criteria" class="nav-link" data-scroll-target="#optimized-criteria"><span class="header-section-number">3.2</span> Optimized criteria</a></li>
+  <li><a href="#masked-language-modeling-mlm" id="toc-masked-language-modeling-mlm" class="nav-link" data-scroll-target="#masked-language-modeling-mlm"><span class="header-section-number">3.3</span> Masked Language Modeling (MLM)</a></li>
+  <li><a href="#conditional-language-modeling-translation-loss" id="toc-conditional-language-modeling-translation-loss" class="nav-link" data-scroll-target="#conditional-language-modeling-translation-loss"><span class="header-section-number">3.4</span> Conditional Language Modeling / Translation Loss</a></li>
+  <li><a href="#initial-embedding" id="toc-initial-embedding" class="nav-link" data-scroll-target="#initial-embedding"><span class="header-section-number">3.5</span> Initial embedding</a></li>
+  <li><a href="#a-minimal-self-attention-architecture-for-decoder" id="toc-a-minimal-self-attention-architecture-for-decoder" class="nav-link" data-scroll-target="#a-minimal-self-attention-architecture-for-decoder"><span class="header-section-number">3.6</span> A minimal self-attention architecture for decoder</a></li>
+  <li><a href="#attention-and-matrix-notation" id="toc-attention-and-matrix-notation" class="nav-link" data-scroll-target="#attention-and-matrix-notation"><span class="header-section-number">3.7</span> Attention and matrix notation</a></li>
+  <li><a href="#ilustration-of-self-attention" id="toc-ilustration-of-self-attention" class="nav-link" data-scroll-target="#ilustration-of-self-attention"><span class="header-section-number">3.8</span> Ilustration of self-Attention</a></li>
+  <li><a href="#interpretation-of-q-k-v" id="toc-interpretation-of-q-k-v" class="nav-link" data-scroll-target="#interpretation-of-q-k-v"><span class="header-section-number">3.9</span> Interpretation of Q, K, V</a></li>
+  <li><a href="#important-details" id="toc-important-details" class="nav-link" data-scroll-target="#important-details"><span class="header-section-number">3.10</span> Important details</a></li>
+  <li><a href="#positional-encoding" id="toc-positional-encoding" class="nav-link" data-scroll-target="#positional-encoding"><span class="header-section-number">3.11</span> Positional encoding</a></li>
+  <li><a href="#feed-forward-neural-network" id="toc-feed-forward-neural-network" class="nav-link" data-scroll-target="#feed-forward-neural-network"><span class="header-section-number">3.12</span> Feed Forward Neural Network</a></li>
+  <li><a href="#skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al." id="toc-skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al." class="nav-link" data-scroll-target="#skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al."><span class="header-section-number">3.13</span> Skip connection (original paper “Deep Residual Learning for Image Recognition” 2015 by He et al.)</a></li>
+  <li><a href="#multi-head-attention" id="toc-multi-head-attention" class="nav-link" data-scroll-target="#multi-head-attention"><span class="header-section-number">3.14</span> Multi-head attention</a></li>
+  <li><a href="#fine-tuning" id="toc-fine-tuning" class="nav-link" data-scroll-target="#fine-tuning"><span class="header-section-number">3.15</span> Fine tuning</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The nature of transformers</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<ul>
+<li>Deep learning architecture based on <strong>attention mechanisms</strong></li>
+<li>Weight the importance of different tokens in a sequence to <strong>model long-range dependencies efficiently</strong></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/history-to-chatgpt.png" class="img-fluid figure-img"></p>
+<figcaption>History of AI leading to chatGPT</figcaption>
+</figure>
+</div>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph TD
+    A["1950: Turing Test proposed by Alan Turing"]
+    A --&gt; B["1956: Artificial Intelligence term coined at Dartmouth Conference"]
+    B --&gt; C["1966: ELIZA, an early NLP program, developed"]
+    C --&gt; D["1997: IBM's Deep Blue defeats chess champion Garry Kasparov"]
+    D --&gt; E["2012: Deep learning breakthroughs with neural networks"]
+    E --&gt; F["2015: OpenAI founded"]
+    F --&gt; G["2017: Transformer model introduced"]
+    G --&gt; H["2020: GPT-3 released by OpenAI"]
+    H --&gt; I["2022: ChatGPT launched by OpenAI"]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<section id="the-nature-of-transformers" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="the-nature-of-transformers"><span class="header-section-number">3.1</span> The nature of transformers</h2>
+<div class="columns">
+<div class="column" style="width:35%;">
+<p>A classical transformer is a function <span class="math display">\[
+T(w_{1:n}) = \begin{bmatrix} p_1 \\
+\vdots \\
+p_{|V|}\end{bmatrix}
+\]</span></p>
+</div><div class="column" style="width:65%;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/transformers.jpeg" class="img-fluid figure-img" width="400"></p>
+<figcaption>The nature of transformer</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><span class="math inline">\(\mathcal V\)</span> is a finite set (vocabulary) (Open AI uses 50,000 token as vocabulary)</li>
+<li><span class="math inline">\(w_{1:n}\)</span> be a sequence of token, where each <span class="math inline">\(w_i \in \mathcal V\)</span> (In practice context varies from 1 to n, the blocksize)</li>
+<li><span class="math inline">\(p_j\)</span> is the probability of <span class="math inline">\(w_{(j)}\)</span> the jth token in <span class="math inline">\(\mathcal V\)</span></li>
+</ul>
+<section id="remarks" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="remarks"><span class="header-section-number">3.1.1</span> Remarks</h3>
+<ul>
+<li><span class="math inline">\(w_{1:n}\)</span> is usually coded a matrix of one-hot vectors with <span class="math inline">\(w_{1:n} \in \mathbb{R}^{n \times |V|}\)</span>.</li>
+<li>For classical chatbot <span class="math inline">\(p_j = P(w_{n+1}  = w_{(j)} | w_{1:n})\)</span> where <span class="math inline">\(w_{(j)}\)</span> is the jthe element of <span class="math inline">\(\mathcal V\)</span>.</li>
+</ul>
+</section>
+</section>
+<section id="optimized-criteria" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="optimized-criteria"><span class="header-section-number">3.2</span> Optimized criteria</h2>
+<p>Transformers typically optimize different criteria depending on the task they are trained on.</p>
+<section id="causal-language-modeling-clm-autoregressive-loss" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="causal-language-modeling-clm-autoregressive-loss"><span class="header-section-number">3.2.1</span> Causal Language Modeling (CLM) / Autoregressive Loss</h3>
+<ul>
+<li><strong>Used in:</strong> GPT models</li>
+<li><strong>Objective:</strong> Predict the next token given the previous tokens</li>
+</ul>
+<p>The training set is a set of sequences <span class="math inline">\((s_j)\)</span> of <span class="math inline">\(n\)</span> tokens <span class="math inline">\(s_j=(w_1^j, w_2^j, \dots, w_n^j)\)</span>:</p>
+<p><span class="math display">\[
+L_{CLM} = -  \sum_j\sum_{t=1}^n \sum_{c\in V} I\!\!I_{w_t^j=c}\log P(w_t^j=c | w_{1:t-1}^j)
+\]</span> where <span class="math inline">\(w_{1:t-1}^j\)</span> denotes the tokens preceding position <span class="math inline">\(t\)</span> in the sequence <span class="math inline">\(j\)</span></p>
+<p>The criterion is a kind of pseudo log-likelihood.</p>
+<p>If nothing is learned each token has the same probability of appearing: the largest possible value of the criterion is <span class="math display">\[
+-\log\frac{1}{|V|}
+\]</span></p>
+</section>
+</section>
+<section id="masked-language-modeling-mlm" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="masked-language-modeling-mlm"><span class="header-section-number">3.3</span> Masked Language Modeling (MLM)</h2>
+<ul>
+<li><strong>Used in:</strong> BERT models</li>
+<li><strong>Objective:</strong> Predict randomly masked tokens in a sentence.</li>
+</ul>
+<p>Let <span class="math inline">\(M_j \subset \{1, \dots, n\}\)</span> be the set of masked positions in the sequence <span class="math inline">\((s_j)\)</span>:</p>
+<p><span class="math display">\[
+L_{MLM} = -  \sum_j \sum_{t \in M_j} \sum_{c\in V} I\!\!I_{w_t^j=c} \log P(w_t^j=c | w^j_{(1:n)\backslash M})
+\]</span></p>
+</section>
+<section id="conditional-language-modeling-translation-loss" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="conditional-language-modeling-translation-loss"><span class="header-section-number">3.4</span> Conditional Language Modeling / Translation Loss</h2>
+<ul>
+<li><strong>Used in:</strong> T5, BART</li>
+<li><strong>Objective:</strong> Predict an output sequence given an input sequence (e.g., translation, summarization).</li>
+</ul>
+<p>Given input sequence <span class="math inline">\(w^j = (w^j_1, \dots, w^j_n)\)</span> and output sequence <span class="math inline">\(v^j = (v^j_1, \dots, v^j_m)\)</span>:</p>
+<p><span class="math display">\[
+L_{Seq2Seq} = - \sum_j \sum_{t=1}^m \sum_{c\in V} I\!\!I_{v_t^j=c} \log P(v_m^j=c | v^j_{1:m-1}, w^j_{1:n})
+\]</span></p>
+<section id="other-losses" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="other-losses"><span class="header-section-number">3.4.1</span> Other losses</h3>
+<p>Transformers exact objective functions depends on type of considered problems</p>
+</section>
+</section>
+<section id="initial-embedding" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="initial-embedding"><span class="header-section-number">3.5</span> Initial embedding</h2>
+<ul>
+<li>The token are first embedded in a <span class="math inline">\(d\)</span> dimensional space (see previous topic)</li>
+<li>the representation <span class="math inline">\(x_i= E w_i\)</span> is independent of context.</li>
+<li>Let <span class="math inline">\(X= x_{1:n} = w_{1:n} E^\top \in \mathbb{R}^{n \times d}\)</span>.</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/initial-embedding.jpeg" class="img-fluid figure-img"></p>
+<figcaption>Initial embedding</figcaption>
+</figure>
+</div>
+</section>
+<section id="a-minimal-self-attention-architecture-for-decoder" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="a-minimal-self-attention-architecture-for-decoder"><span class="header-section-number">3.6</span> A minimal self-attention architecture for decoder</h2>
+<p><strong>Attention is a communication mecanism</strong> between the tokens of a sequence.</p>
+<p>Self attention proposes a contextual representation <span class="math inline">\(h_i\)</span> of <span class="math inline">\(x_i\)</span> as a linear combination the sequence: <span class="math display">\[
+h_i =V . \sum_{j=1}^n \alpha_{ij}  x_j
+\]</span></p>
+<ul>
+<li><span class="math inline">\(h_i\)</span> aggregates the past between query (current postion i) and key (other past position j)
+<ul>
+<li><span class="math inline">\(\sum_j \alpha_{ij}=1\)</span></li>
+</ul></li>
+<li>In decoder the future cannot communicate with the past
+<ul>
+<li><span class="math inline">\(\forall j&gt;i, \alpha_{ij}=0\)</span></li>
+</ul></li>
+<li>the structure of the attention matrix is thus lower triangular in classical GPT decoder,</li>
+<li>it is not necessary to have a triangular attention matrix (i.e.&nbsp;sentiment analysis)</li>
+<li><span class="math inline">\(V\)</span> is learned matrix of parameters and can be seen a projection matrix modifying the embedding of the linear combination of sequence tokens. Let consider V as a square matrix <span class="math inline">\(d\times d\)</span>.</li>
+</ul>
+</section>
+<section id="attention-and-matrix-notation" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="attention-and-matrix-notation"><span class="header-section-number">3.7</span> Attention and matrix notation</h2>
+<ul>
+<li><span class="math inline">\(\alpha_{ij}=\text{softmax}(x_i^T Q^T K x_j) = \frac{exp(x_i^T Q^T K x_j)}{\sum_{j=1}^n \exp{\left(  x_i^T Q^T K x_j \right)}}\)</span>, where
+<ul>
+<li>Q is a matrix that modifies the embedding of the token we are looking for. Let consider V as a square matrix <span class="math inline">\(d\times d\)</span>.
+<ul>
+<li>K is a matrix that modifies the embedding of the word we are comparing against. Let consider V as a square matrix <span class="math inline">\(d\times d\)</span>.</li>
+</ul></li>
+</ul></li>
+</ul>
+<section id="matrix-notation" class="level3" data-number="3.7.1">
+<h3 data-number="3.7.1" class="anchored" data-anchor-id="matrix-notation"><span class="header-section-number">3.7.1</span> Matrix notation</h3>
+<p><span class="math display">\[
+H=\begin{bmatrix}
+h_1^T \\
+\vdots \\
+h_n^T
+\end{bmatrix} = \text{Attention(Q,K,V,X)}=   \text{softmax}(X (Q^T K )X^T)X V^T
+\]</span></p>
+</section>
+<section id="remark" class="level3" data-number="3.7.2">
+<h3 data-number="3.7.2" class="anchored" data-anchor-id="remark"><span class="header-section-number">3.7.2</span> Remark</h3>
+<p>In the original paper (“Attention is all you need”, 2017) the notation is different and notes:</p>
+<ul>
+<li><span class="math inline">\(X Q^T\)</span> as <span class="math inline">\(Q\)</span>,</li>
+<li><span class="math inline">\(X K^T\)</span> as <span class="math inline">\(K\)</span>, and</li>
+<li><span class="math inline">\(X V^T\)</span> as <span class="math inline">\(V\)</span></li>
+</ul>
+</section>
+</section>
+<section id="ilustration-of-self-attention" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="ilustration-of-self-attention"><span class="header-section-number">3.8</span> Ilustration of self-Attention</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/self-attention.jpeg" class="img-fluid figure-img"></p>
+<figcaption>Self-attention block in auto-encoder</figcaption>
+</figure>
+</div>
+</section>
+<section id="interpretation-of-q-k-v" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="interpretation-of-q-k-v"><span class="header-section-number">3.9</span> Interpretation of Q, K, V</h2>
+<ul>
+<li>The query is modified version of an initial embedding <span class="math inline">\(q_i = Q x_i\)</span><br>
+</li>
+<li>The Key is modified version of an initial embedding <span class="math inline">\(k_i = K x_i\)</span></li>
+<li>Value is modified version of an initial embedding <span class="math inline">\(v_i = V x_i\)</span>, which should include contextual information since it is a transformation of a linear combination of the context tokens…</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 47%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Attention Concept</th>
+<th>Sometimes Similar to</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Query</td>
+<td>Target (What to focus on)</td>
+</tr>
+<tr class="even">
+<td>Key</td>
+<td>Context (What to compare against, the source of information)</td>
+</tr>
+<tr class="odd">
+<td>Value</td>
+<td>Contextual embedding</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="important-details" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="important-details"><span class="header-section-number">3.10</span> Important details</h2>
+<p>The original paper introduces many add-ons, which much improve the transformers performances:</p>
+<ul>
+<li><strong>Positional encoding</strong> for introducing the notion of order in the sequence</li>
+<li>FFN: <strong>Feed Forward Neural layer</strong>.
+<ul>
+<li>As the attention is a linear operation composed with a softmax, a Feed Forward Neural layer is added for making the function more flexible</li>
+</ul></li>
+<li><strong>Multi-blocks</strong>: In the spirit of Deep learning blocks of attention and FNN are repeated…</li>
+<li><strong>Dropout layers</strong> are used for prevenring overfitting (from “Dropout a simple way to prevent NN from overfitting” Hinton)</li>
+<li>Simple trick of <strong>Skip connection</strong> for stabilizing the gradient (from “Deep learning residuals for image recognition”)
+<ul>
+<li>The deep learning structure tends to cause problems with gradient computation (vanishing or exploding gradient)</li>
+</ul></li>
+<li>In order to make tokens comparable, they are all <strong>normalized</strong> at the output of each blocks:
+<ul>
+<li>The classical z-transformed is applied (with Bayesian correction)</li>
+</ul></li>
+<li><strong>Multi-head attention</strong>: computes multiple attention functions (heads) in parallel</li>
+</ul>
+</section>
+<section id="positional-encoding" class="level2" data-number="3.11">
+<h2 data-number="3.11" class="anchored" data-anchor-id="positional-encoding"><span class="header-section-number">3.11</span> Positional encoding</h2>
+<ul>
+<li>Attention do not consider order of tokens !</li>
+<li>Incorporating information about the order of tokens is achieved by adding positional encodings to the input embeddings</li>
+</ul>
+<p>The original transformer implementation uses:</p>
+<ul>
+<li>even indices: <span class="math display">\[
+PE_{\text{pos}, 2i} = \sin\left(\frac{\text{pos}}{10000^{\frac{2i}{d}}}\right)
+\]</span></li>
+<li>odd indices: <span class="math display">\[
+PE_{\text{pos}, 2i+1} = \cos\left(\frac{\text{pos}}{10000^{\frac{2i}{d}}}\right)
+\]</span></li>
+</ul>
+<p>It ensures that each position is assigned a unique encoding</p>
+</section>
+<section id="feed-forward-neural-network" class="level2" data-number="3.12">
+<h2 data-number="3.12" class="anchored" data-anchor-id="feed-forward-neural-network"><span class="header-section-number">3.12</span> Feed Forward Neural Network</h2>
+<ul>
+<li><strong>Attention mechanism operates linearly</strong> to capture dependencies between tokens in a sequence</li>
+<li>Non-linearity enhance the model’s expressive power</li>
+</ul>
+<section id="structure-of-the-ffn" class="level3" data-number="3.12.1">
+<h3 data-number="3.12.1" class="anchored" data-anchor-id="structure-of-the-ffn"><span class="header-section-number">3.12.1</span> Structure of the FFN:</h3>
+<p>Each FFN consists of two linear transformations with a non-linear activation function in between:</p>
+<ol type="1">
+<li>First Linear Transformation: embedding of the input from the model’s dimensionality <span class="math inline">\(d\)</span> to a higher-dimensional space</li>
+<li>Activation Function: A non-linear function is applied to introduce non-linearity</li>
+<li>Second Linear Transformation: projects the output back to the original dimensionality</li>
+</ol>
+<p><span class="math display">\[
+\text{FFN}(x) = W_2 \cdot \text{ReLU}(W_1 \cdot x + b_1) + b_2
+\]</span></p>
+<p>where <span class="math inline">\(W_1\)</span> and <span class="math inline">\(W_2\)</span> are weight matrices, and <span class="math inline">\(b_1\)</span> and <span class="math inline">\(b_2\)</span> are bias vectors.</p>
+</section>
+</section>
+<section id="skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al." class="level2" data-number="3.13">
+<h2 data-number="3.13" class="anchored" data-anchor-id="skip-connection-original-paper-deep-residual-learning-for-image-recognition-2015-by-he-et-al."><span class="header-section-number">3.13</span> Skip connection (original paper “Deep Residual Learning for Image Recognition” 2015 by He et al.)</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/skip-connection.png" class="img-fluid figure-img" style="width:50.0%"></p>
+<figcaption>Skip connection</figcaption>
+</figure>
+</div>
+<p>Skip connections address the vanishing (and exploding) gradient problems</p>
+<ul>
+<li><p>Consider a neural network layer with an input <span class="math inline">\(x\)</span> and a desired underlying function <span class="math inline">\(H(x)\)</span>.</p></li>
+<li><p>Incorporating a skip connection, the layer is restructured to model a residual <span class="math inline">\(F(x)= H(x)- x\)</span>. Thus, the output of this layer becomes:</p></li>
+</ul>
+<p><span class="math display">\[
+y = F(x) + x
+\]</span></p>
+<section id="benefits" class="level3" data-number="3.13.1">
+<h3 data-number="3.13.1" class="anchored" data-anchor-id="benefits"><span class="header-section-number">3.13.1</span> Benefits:</h3>
+<ul>
+<li>Enhanced Gradient Flow</li>
+<li>Faster convergence and higher accuracy</li>
+</ul>
+</section>
+</section>
+<section id="multi-head-attention" class="level2" data-number="3.14">
+<h2 data-number="3.14" class="anchored" data-anchor-id="multi-head-attention"><span class="header-section-number">3.14</span> Multi-head attention</h2>
+<ul>
+<li>Multi-Head Attention captures various aspects of the data.</li>
+<li>The mechanism computes multiple attention functions (heads) in parallel.</li>
+<li>Each head operates on linearly projected versions of the queries, keys, and values</li>
+</ul>
+<p>Each head <span class="math inline">\(k\)</span> computes the attention scores <span class="math display">\[
+\text{Attention}(Q_k, K_k, V_k) = \text{softmax}\left(\frac{XQ_k^T K_kX}{\sqrt{d_k}}\right)X V_k^T
+\]</span> where <span class="math inline">\(d_k\)</span> is the dimension of the key vectors</p>
+<section id="concatenation" class="level3" data-number="3.14.1">
+<h3 data-number="3.14.1" class="anchored" data-anchor-id="concatenation"><span class="header-section-number">3.14.1</span> Concatenation</h3>
+<p>The outputs of all heads are concatenated and projected through a final linear layer: <span class="math display">\[
+\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \ldots, \text{head}_h) P
+\]</span> The multi head matrix is <span class="math inline">\(d \times d\)</span>, where - <span class="math inline">\(h\)</span> is the number of head, - <span class="math inline">\(d_k= d/h\)</span> the size of the projection space of head k - <span class="math inline">\(P\)</span> is a projection matrix combining the heads.</p>
+</section>
+<section id="benefits-1" class="level3" data-number="3.14.2">
+<h3 data-number="3.14.2" class="anchored" data-anchor-id="benefits-1"><span class="header-section-number">3.14.2</span> Benefits</h3>
+<ul>
+<li>Diverse Representations: Each head can capture different features or relationships within the data, enabling the model to understand various aspects of the input (grammar, style, “meaning”…).
+<ul>
+<li>Parallel Processing: Multiple heads allow the model to process different parts of the sequence simultaneously, improving efficiency.</li>
+<li>Enhanced Capacity: By attending to information from different subspaces, the model can capture complex patterns and dependencies.</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="fine-tuning" class="level2" data-number="3.15">
+<h2 data-number="3.15" class="anchored" data-anchor-id="fine-tuning"><span class="header-section-number">3.15</span> Fine tuning</h2>
+<p>After a pretraining step that ressembles closely to a decoder…</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/chatGPT-steps.jpeg" style="height:70.0%" class="figure-img"></p>
+<figcaption>ChatGPT fine tuning (from A. Karpathy lecture)</figcaption>
+</figure>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/word-embedding.html" class="pagination-link" aria-label="Words and Vectors">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Words and Vectors</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/transformers-exercice.html" class="pagination-link" aria-label="Exercises - GPT from scratch">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Exercises - GPT from scratch</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
