@@ -20,10 +20,9 @@ format:
     echo: false
 
   revealjs:
-    theme: league
+    theme: white
     html-math-method: mathjax
     scrollable: true
-    transition: convex
     embed-resources: true
     echo: false
     width: 2400

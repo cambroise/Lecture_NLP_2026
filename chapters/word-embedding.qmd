@@ -1,11 +1,86 @@
-## Words and Vectors
+
+
+## Different approaches of language modeling
+
+Three paradigms have shaped how machines process and understand language:
+
+### Symbolic (rule-based)
+
+Hand-crafted grammars, lexicons, and inference rules encode linguistic knowledge explicitly.
+
+- **How it works**: linguists write rules (*"a noun phrase = determiner + adjective + noun"*); parsers apply them mechanically.
+- **Strengths**: interpretable, deterministic, works well on narrow well-defined tasks.
+- **Weaknesses**: brittle — rules break on unseen text; enormous engineering effort; poor coverage of natural language variability.
+- **Examples**: ELIZA (1966), WordNet, classic machine translation systems (SYSTRAN).
+
+### Statistical (data-driven)
+
+Learn probability distributions over words and sequences from large corpora; no hand-crafted rules.
+
+- **How it works**: count co-occurrences, estimate $n$-gram probabilities, or learn latent factors (TF-IDF, PMI, LSA, LDA).
+- **Strengths**: robust to variation, scales with data, language-agnostic.
+- **Weaknesses**: requires large corpora; bag-of-words models lose word order; sparse representations struggle with rare words.
+- **Examples**: $n$-gram language models, TF-IDF retrieval, LSA, LDA.
+
+### Neural (deep learning)
+
+Learn dense, distributed representations end-to-end from raw text using differentiable architectures.
+
+- **How it works**: train neural networks (feedforward, RNN, Transformer) on prediction tasks; representations emerge as by-products of training.
+- **Strengths**: capture long-range dependencies, share statistical strength across similar words (dense embeddings), generalise well.
+- **Weaknesses**: data- and compute-hungry; less interpretable; static embeddings conflate word senses.
+- **Examples**: Word2Vec, GloVe, ELMo, BERT, GPT.
+
+::: {.callout-note}
+The three paradigms are not mutually exclusive. Modern systems often combine them
+:::
+
+
+
+
+## History of Word Embeddings
+
+- 1950s: Distributional hypothesis (Harris 1954; Firth 1957)
+
+::: {.callout-note}
+**Distributional models** (also called *distributional semantic models*) represent the meaning of a word as a function of the contexts in which it appears. They are grounded in the **distributional hypothesis** (Harris 1954; Firth 1957): *"a word is characterized by the company it keeps"* — words that occur in similar contexts tend to be related in meanings. These models derive meaning automatically from large corpora by counting co-occurrences.
+:::
+
+- 1990: Latent Semantic Analysis (LSA) — Deerwester et al. (1990)
+- 2003: Latent Dirichlet Allocation (LDA) — Blei et al. (2003)
+- 2013: Word2Vec — Mikolov et al. (2013)
+- 2014: GloVe — Pennington et al. (2014)
+
+
+
+
+## From Words to Vectors
 
 Vector or distributional models of meaning are generally based on a co-occurrence matrix
+
 
 ### Two common co-occurrence matrix
 
 -   the word-document matrix
 -   the word-word matrix.
+
+### Practical construction
+
+
+- **tokenization** and **lemmatization** are common preprocessing steps to reduce sparsity and focus on content words. 
+
+  - a token is a unit of text (word, subword, character) that serves as the basic building block for vector representations.	
+  - Lemmatization reduces inflected forms to a common base form (lemma).
+	  - For example, "run", "runs", "running" would all be lemmatized to "run".
+  - tokens like "the", "is", "and" are often removed as stop words.
+
+- **The choice of context** (document, sentence, window) also affects the resulting vectors.
+
+:::{.callout-note}
+In the document we will use `term`or `word` to refer to meaning units, and `context` to refer to the column labels. The context could be a document, a sentence, or a window of words around the **target word**.
+:::
+
+
 
 ## Word-document matrix
 
@@ -26,9 +101,7 @@ Corpus of 5 short sentences about NLP (used as a running example throughout this
 
 : Term-document matrix — S1: *"word embeddings represent meaning"* · S2: *"deep neural networks learn representations"* · S3: *"language models process text"* · S4: *"word vectors capture context"* · S5: *"neural language models predict"*
 
-::: {.callout-note}
-"embeddings" (S1) and "vectors" (S4) never appear in the same document, yet both co-occur with "word". LSA will detect this indirect synonymy.
-:::
+
 
 ## Word-Word matrix
 
@@ -69,23 +142,31 @@ $$
 
 ## TF-IDF: Weigthing terms in the vector
 
-### Term frequency (tf)
+### Term frequency (TF)
 
--   Raw frequency $tf_{t,d} = count(t,d)$ is very skewed and not very discriminative.
--   Usually squashed by using the $log10$: a word appearing 100 times in a document doesn't make that word 100 times more relevant $$
-    \text{tf}_{t,d} =  \log_{10}\left(count(t,d)+1\right)
-    $$
+-   Raw frequency $TF_{t,d} = count(t,d)$ is very skewed and not very discriminative.
+-   Usually squashed by using the $log10$: a word appearing 100 times in a document doesn't make that word 100 times more relevant 
+
+$$
+    \text{TF}_{t,d} =  \log_{10}\left(count(t,d)+1\right)
+$$
 
 ### Inverse document frequency
 
-The second factor in tf-idf is used to give a higher weight to words that occur only in a few documents. $$
-idf_t = \log_{10}\left(\frac{N}{\text{df}_t}\right)   
-$$ where $N$ is the total number of documents, and $df_t$ is the number of documents in which term $t$ occurs.
+The second factor in tf-idf is used to give a higher weight to words that occur only in a few documents. 
+
+$$
+IDF_t = \log_{10}\left(\frac{N}{\text{DF}_t}\right)   
+$$ 
+
+where $N$ is the total number of documents, and $DF_t$ is the number of documents in which term $t$ occurs.
 
 ## TF-IDF: Weigthing terms in the vector
 
-The tf-idf weighted value $w_{t,d}$ for word $t$ in document $d$ thus combines term frequency $tf_{t,d}$ with $idf$: $$
-w_{t,d} = tf_{t,d} \times idf_t
+The TF-IDF weighted value $w_{t,d}$ for term $t$ in document $d$ thus combines term frequency $TF_{t,d}$ with $IDF_t$: 
+
+$$
+w_{t,d} = TF_{t,d} \times IDF_t
 $$
 
 Applied to our running corpus ($N=5$ documents):
@@ -101,7 +182,7 @@ Applied to our running corpus ($N=5$ documents):
 | **context** | 0 | 0 | 0 | **0.21** | 0 | 0.70 |
 | **meaning** | **0.21** | 0 | 0 | 0 | 0 | 0.70 |
 
-: TF-IDF weighted term-document matrix — $\text{tf} = \log_{10}(1+1) = 0.30$ for all present terms (each appears once per sentence)
+: TF-IDF weighted term-document matrix — $\text{TF} = \log_{10}(1+1) = 0.30$ for all present terms (each appears once per sentence)
 
 Words appearing in only one document ("embeddings", "vectors", "context", "meaning") receive the highest weight 0.21; words shared across two documents ("word", "neural", "language", "models") receive 0.12.
 
@@ -112,9 +193,13 @@ An alternative weighting function to tf-idf, PPMI (positive pointwise mutual inf
  - Target word, word we focus on.
  - Context words surrounding the target word
 
-The pointwise mutual information between a target word $w$ and a context word $c$ (Church and Hanks 1989, Church and Hanks 1990) is defined as: $$
+The pointwise mutual information between a **target word** $w$ and a **context word** $c$ (Church and Hanks 1989, Church and Hanks 1990) is defined as: 
+
+$$
 PMI(w, c) = \log_2 \frac{P(w, c)}{ P(w)P(c)}
 $$
+
+
 
 ## Positive PMI (called PPMI)
 
@@ -128,9 +213,35 @@ $$
 PPMI(w, c) = \max(\log_2 \frac{P(w, c)}{P(w)P(c)} , 0) 
 $$
 
+
+
+::: {.callout-warning}
+**What if $P(w, c) = 0$?**
+
+When a pair $(w, c)$ is never observed in the corpus:
+$$P(w, c) = 0 \implies PMI(w, c) = \log_2 \frac{0}{P(w)P(c)} = -\infty$$
+
+PPMI neutralises this *on the surface* — $\max(0, -\infty) = 0$ — but this hides an important ambiguity: after PPMI, a score of 0 can mean two very different things:
+
+- the pair is **unobserved** (no information)
+- the pair is **independent** (PMI exactly zero)
+
+**Common solutions**
+
+- **Smoothing**: add a small $\epsilon > 0$ to all counts before estimating probabilities, avoiding zeros at the cost of a slight bias.
+
+- **Sparse storage**: store only non-zero entries — zeros are never computed. This is the most pragmatic and widespread approach in practice.
+:::
+
+
+## Example of PPMI weighting
+
+
 Applied to our word-word matrix (16 context pairs total, window $L=1$):
 
-$$\text{PMI}(\text{embeddings}, \text{word}) = \log_2 \frac{P(\text{emb},\text{word})}{P(\text{emb}) \cdot P(\text{word})} = \log_2 \frac{1/16}{(2/16)(2/16)} = \log_2 4 = 2.0$$
+$$
+\text{PMI}(\text{embeddings}, \text{word}) = \log_2 \frac{P(\text{emb},\text{word})}{P(\text{emb}) \cdot P(\text{word})} = \log_2 \frac{1/16}{(2/16)(2/16)} = \log_2 4 = 2.0
+$$
 
 | | word | embeddings | vectors | represent | meaning |
 |---|:---:|:---:|:---:|:---:|:---:|
@@ -142,11 +253,9 @@ $$\text{PMI}(\text{embeddings}, \text{word}) = \log_2 \frac{P(\text{emb},\text{w
 
 : PPMI matrix — all other co-occurrences have PMI $\leq 0$, set to 0 by PPMI
 
-::: {.callout-note}
-"embeddings" and "vectors" have **identical PPMI profiles**: both associate with "word" only (PMI = 2.0) and with nothing else. PPMI already encodes their synonymy before any SVD.
-:::
 
-## Applications of the tf-idf or PPMI vector models
+
+## Applications of the TF-IDF or PPMI vector models
 
 ### Principle
 
@@ -176,7 +285,7 @@ LSA uses singular value decomposition (SVD) to identify latent, or hidden, patte
 LSA uses SVD on the matrix of word-document matrix to identify the latent concepts (contexts, topics, ...) that underlie the relationships between words in the corpus: $W = U S V^T$ with classical low rank approximation $U_k S_k V_k^T$
 
 
-![](../images/LSA.png)
+![](../images/lsa_svd.png)
 
 
 ## Latent Semantic Analysis
@@ -318,16 +427,44 @@ Step 2: Assign Topics to Documents
 -   short dense vectors: $d$ ranging from 50-1000, rather than the much larger vocabulary size $|V|$ or number of documents $D$
 -   dense vectors work better in every NLP task than sparse vectors
 
+
 ### Skip-gram with negative sampling
 
 -   The skip-gram algorithm is one of two algorithms in a software package called word2vec
 -   The other algorithm is CBOW (continuous bag of words)
 
+The two algorithms share the same neural architecture but differ in the direction of prediction:
+
+**1. Skip-gram**
+
+- *Task*: given a target word $w$, predict its surrounding context words $c$.
+- *Objective*: maximise $P(c \mid w)$ for each observed context word.
+- Each occurrence of a word produces multiple training signals (one per context word in the window), making skip-gram particularly effective for **rare words**.
+- Slower to train: generates many predictions per word.
+
+**2. CBOW (Continuous Bag of Words)**
+
+- *Task*: given a bag of context words $c_1, c_2, \ldots, c_k$, predict the central word $w$.
+- *Objective*: maximise $P(w \mid c_1, c_2, \ldots, c_k)$.
+- Context vectors are averaged before the prediction step, which smooths out context information.
+- Faster to train: one prediction per window; works better for **frequent words**.
+
+| | Skip-gram | CBOW |
+|---|---|---|
+| Prediction direction | word → context | context → word |
+| Training speed | Slower | Faster |
+| Rare words | Better | Worse |
+| Frequent words | Good | Better |
+
+
 ## Embedding derived from classification
 
 ### Data : words and their context (neighboring words ($\pm L$)
 
-... lemon, a [tablespoon of apricot jam, a] pinch ... c1 c2 w c3 c4
+
+word embeddings **represent** meaning
+
+c1 c2 **w** c3 
 
 ### Classification task
 
@@ -337,7 +474,9 @@ $$
 
 ### Similarity
 
-we rely on the intuition that two vectors are similar if they have a high dot product (after all, cosine is just a normalized dot product). In other words: $$
+we rely on the intuition that two vectors are similar if they have a high dot product (cosine is just a normalized dot product):
+
+$$
 Similarity(\boldsymbol w,\boldsymbol c) = \boldsymbol c^T \boldsymbol w
 $$
 
@@ -420,15 +559,37 @@ On our running corpus, $X_{\text{embeddings},\text{word}} = 1$ and $X_{\text{vec
 
 ## GloVe objective
 
-Learn $\boldsymbol{w}_i, \tilde{\boldsymbol{w}}_j \in \mathbb{R}^d$ and scalar biases $b_i, \tilde{b}_j$ to minimise:
+Learn $\boldsymbol{w}_i, \boldsymbol{c}_j \in \mathbb{R}^d$ (target and context vectors) and scalar biases $b_i, b^c_j$ to minimise:
 
-$$J = \sum_{i,j=1}^{|V|} f(X_{ij})\left(\boldsymbol{w}_i^T\tilde{\boldsymbol{w}}_j + b_i + \tilde{b}_j - \log X_{ij}\right)^2$$
+$$J = \sum_{i,j=1}^{|V|} f(X_{ij})\left(\boldsymbol{w}_i^T\boldsymbol{c}_j + b_i + b^c_j - \log X_{ij}\right)^2$$
 
 **Weighting function** — downweights rare pairs, caps frequent ones:
 
 $$f(x) = \begin{cases}(x / x_{\max})^\alpha & x < x_{\max} \\ 1 & x \geq x_{\max}\end{cases} \qquad x_{\max}=100,\; \alpha=0.75$$
 
-**Intuition**: the dot product of two word vectors should predict their log co-occurrence count: $\boldsymbol{w}_i^T\tilde{\boldsymbol{w}}_j \approx \log X_{ij}$.
+**Intuition**: the dot product of two word vectors should predict their log co-occurrence count: $\boldsymbol{w}_i^T\boldsymbol{c}_j \approx \log X_{ij}$.
+
+## Interpretation of the GloVe objective
+
+The decomposition of the joint log probability is:
+
+$$
+\log P(w_1, w_2) = \underbrace{\log P(w_2 \mid w_1)}_{\text{relational signal}} + \underbrace{\log P(w_1)}_{\text{marginal of } w_1 \text{ only}}
+$$
+
+If the dot product modelled $\log P(w_1, w_2)$ directly, it would encode the **marginal frequency** of each word — information irrelevant to the *relationship* between the pair.
+
+Instead, GloVe decomposes the target explicitly:
+
+$$\underbrace{\boldsymbol{w}_i^T\boldsymbol{c}_j}_{\text{relational signal}} + \underbrace{b_i + b^c_j}_{\text{absorb marginals}} \approx \log X_{ij}$$
+
+The bias terms soak up $\log P(w_i)$ and $\log P(w_j)$, so the dot product converges to:
+
+$$\boldsymbol{w}_i^T\boldsymbol{c}_j \approx \log P(w_j \mid w_i) \approx \operatorname{PMI}(i,j) + \text{const}$$
+
+::: {.callout-note}
+**PMI is the natural target for a dot product**: $\operatorname{PMI}(w,c) = \log P(w,c) - \log P(w) - \log P(c)$ strips both marginals, leaving pure relational signal. Levy & Goldberg (2014) showed that Word2Vec SGNS implicitly factorises the **shifted PMI matrix**.
+:::
 
 ## GloVe: meaning from co-occurrence ratios
 
@@ -442,7 +603,7 @@ The key insight is that **ratios** of co-occurrence probabilities encode semanti
 | $k=$ fashion | small | small | $\approx 1$ |
 
 GloVe vectors encode these ratios directly:
-$$\boldsymbol{w}_i^T\tilde{\boldsymbol{w}}_k - \boldsymbol{w}_j^T\tilde{\boldsymbol{w}}_k \approx \log \frac{P(k \mid i)}{P(k \mid j)}$$
+$$\boldsymbol{w}_i^T\boldsymbol{c}_k - \boldsymbol{w}_j^T\boldsymbol{c}_k \approx \log \frac{P(k \mid i)}{P(k \mid j)}$$
 
 This explains why linear analogy arithmetic ($\boldsymbol{w}_{\text{king}} - \boldsymbol{w}_{\text{man}} + \boldsymbol{w}_{\text{woman}} \approx \boldsymbol{w}_{\text{queen}}$) works: the vector difference encodes a log probability ratio.
 
@@ -461,4 +622,53 @@ Pre-trained vectors are available for both: `word2vec-google-news-300` (100B tok
 
 ::: {.callout-important}
 **Shared limitation**: both methods produce **one static vector per word** regardless of context. The word *bank* gets the same representation whether it means a riverbank or a financial institution. Contextualised embeddings — ELMo, BERT, GPT — overcome this by making representations depend on the full sentence context.
+:::
+
+## Analogy Tasks
+
+### The Core Idea
+
+Mikolov et al. (2013) observed that semantic relationships are encoded as **linear translations** in the embedding space:
+
+$$\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{queen}}$$
+
+The vector **difference** captures a relation, and that relation is approximately **consistent** across all pairs sharing the same relation.
+
+### Solving an Analogy
+
+Given the query *"man is to king as woman is to ?"*, compute:
+
+$$\hat{v} = \vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}}$$
+
+Then find the word $w^*$ whose embedding is closest to $\hat{v}$:
+
+$$w^* = \arg\max_{w \notin \{\text{man, king, woman}\}} \cos(\vec{w},\; \hat{v})$$
+
+The query words are excluded to prevent the trivial answer (e.g. returning "king" itself).
+
+### Why It Works
+
+If the model has learned a consistent **gender direction** $\delta_g$:
+
+$$\vec{\text{king}} - \vec{\text{queen}} \approx \vec{\text{man}} - \vec{\text{woman}} \approx \delta_g$$
+
+then the embedding space organises words so that a given *relation* corresponds to a *constant direction*. The GloVe objective makes this explicit: since $\boldsymbol{w}_i^T\boldsymbol{c}_k \approx \log P(k \mid i)$, the vector difference encodes a log co-occurrence ratio:
+
+$$\boldsymbol{w}_{\text{king}}^T\boldsymbol{c}_k - \boldsymbol{w}_{\text{queen}}^T\boldsymbol{c}_k \approx \log \frac{P(k \mid \text{king})}{P(k \mid \text{queen})}$$
+
+### Standard Benchmark
+
+The **Google Analogy Dataset** (Mikolov 2013) contains ~19 500 questions in two categories:
+
+| Category | Example |
+|---|---|
+| **Semantic** | Paris : France :: Berlin : ? *(Germany)* |
+| **Semantic** | king : man :: queen : ? *(woman)* |
+| **Syntactic** | run : running :: swim : ? *(swimming)* |
+| **Syntactic** | good : better :: bad : ? *(worse)* |
+
+Accuracy = fraction of questions where the top-1 nearest neighbour is exactly the expected word.
+
+::: {.callout-note}
+Both Word2Vec and GloVe achieve comparable accuracy on this benchmark. The linearity assumption is approximate — it breaks for irregular forms (*good → best*, not *gooder*) and for rare words with noisy embeddings.
 :::
