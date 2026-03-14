@@ -1,5 +1,7 @@
 # NLP Lecture 2026 — Traitement du Langage Naturel
 
+![](images/NLP2026.png)
+
 Lecture notes and practical notebooks for the **Natural Language Processing** course taught to M2 students in the *Santé Assurance Finance* (SAF) programme at the **University of Evry Paris-Saclay**.
 
 > **Author:** Christophe Ambroise
