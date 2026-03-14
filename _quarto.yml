@@ -15,8 +15,10 @@ book:
     - index.qmd
     - chapters/word-embedding.qmd
     - chapters/embedding-exercise.qmd
+    - TP/lsa_word2vec.ipynb
     - chapters/transformers.qmd
     - chapters/transformers-exercice.qmd
+    - TP/gpt_dev.ipynb
 
 format:
   html:

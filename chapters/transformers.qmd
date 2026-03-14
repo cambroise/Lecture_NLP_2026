@@ -1,4 +1,15 @@
-## The nature of transformers
+## Outline
+
+
+-   How transformers are defined mathematically and what training objectives they optimise
+-   How **self-attention** produces contextual representations from raw embeddings
+-   The role of positional encoding, FFN, skip connections, layer normalisation, and dropout
+-   The difference between **encoder-only**, **decoder-only**, and **encoder-decoder** architectures
+-   How modern LLMs are fine-tuned (SFT, RLHF) and how text is generated at inference time
+
+---
+
+## From Turing to ChatGPT
 
 -   Deep learning architecture based on **attention mechanisms**
 -   Weight the importance of different tokens in a sequence to **model long-range dependencies efficiently**
@@ -10,7 +21,7 @@
 
 
 ```{mermaid}
-graph TD
+graph LR
     A["1950: Turing Test proposed by Alan Turing"]
     A --> B["1956: Artificial Intelligence term coined at Dartmouth Conference"]
     B --> C["1966: ELIZA, an early NLP program, developed"]
@@ -23,7 +34,7 @@ graph TD
 ```
 
 
-## The nature of transformers
+## What is a Transformer?
 
 ::::: columns
 ::: {.column width="35%"}
@@ -88,7 +99,7 @@ $$
 Given input sequence $w^j = (w^j_1, \dots, w^j_n)$ and output sequence $v^j = (v^j_1, \dots, v^j_m)$:
 
 $$
-L_{Seq2Seq} = - \sum_j \sum_{t=1}^m \sum_{c\in V} I\!\!I_{v_t^j=c} \log P(v_m^j=c | v^j_{1:m-1}, w^j_{1:n})
+L_{Seq2Seq} = - \sum_j \sum_{t=1}^m \sum_{c\in V} I\!\!I_{v_t^j=c} \log P(v_t^j=c | v^j_{1:t-1}, w^j_{1:n})
 $$
 
 ### Other losses
@@ -122,8 +133,8 @@ $$
 ## Attention and matrix notation
 
 -   $\alpha_{ij}=\text{softmax}(x_i^T Q^T K x_j) = \frac{exp(x_i^T Q^T K x_j)}{\sum_{j=1}^n \exp{\left(  x_i^T Q^T K x_j \right)}}$, where
-    -   Q is a matrix that modifies the embedding of the token we are looking for. Let consider V as a square matrix $d\times d$.
-        -   K is a matrix that modifies the embedding of the word we are comparing against. Let consider V as a square matrix $d\times d$.
+    -   Q is a matrix that modifies the embedding of the token we are looking for. Let consider Q as a square matrix $d\times d$.
+        -   K is a matrix that modifies the embedding of the word we are comparing against. Let consider K as a square matrix $d\times d$.
 
 ### Matrix notation
 
@@ -132,7 +143,7 @@ $$
  h_1^T \\
  \vdots \\
  h_n^T
- \end{bmatrix} = \text{Attention(Q,K,V,X)}=   \text{softmax}(X (Q^T K )X^T)X V^T
+ \end{bmatrix} = \text{Attention(Q,K,V,X)}= \text{softmax}\!\left(\frac{X Q^T K X^T}{\sqrt{d_k}}\right) X V^T
 $$
 
 ### Remark
@@ -143,7 +154,9 @@ In the original paper ("Attention is all you need", 2017) the notation is differ
 -   $X K^T$ as $K$, and
 -   $X V^T$ as $V$
 
-## Ilustration of self-Attention
+The $1/\sqrt{d_k}$ scaling prevents the dot products from growing large in magnitude (which would push softmax into regions with very small gradients).
+
+## Illustration of self-Attention
 
 ![Self-attention block in auto-encoder](../images/self-attention.jpeg)
 
@@ -167,12 +180,42 @@ The original paper introduces many add-ons, which much improve the transformers 
 -   FFN: **Feed Forward Neural layer**.
     -   As the attention is a linear operation composed with a softmax, a Feed Forward Neural layer is added for making the function more flexible
 -   **Multi-blocks**: In the spirit of Deep learning blocks of attention and FNN are repeated...
--   **Dropout layers** are used for prevenring overfitting (from "Dropout a simple way to prevent NN from overfitting" Hinton)
+-   **Dropout layers** are used for preventing overfitting (from "Dropout a simple way to prevent NN from overfitting" Hinton)
 -   Simple trick of **Skip connection** for stabilizing the gradient (from "Deep learning residuals for image recognition")
     -   The deep learning structure tends to cause problems with gradient computation (vanishing or exploding gradient)
 -   In order to make tokens comparable, they are all **normalized** at the output of each blocks:
     -   The classical z-transformed is applied (with Bayesian correction)
 -   **Multi-head attention**: computes multiple attention functions (heads) in parallel
+
+## Layer Normalization
+
+After each sub-layer (attention or FFN), a **Layer Normalization** is applied:
+
+$$\text{LayerNorm}(x) = \gamma \odot \frac{x - \mu}{\sigma + \epsilon} + \beta$$
+
+where $\mu$ and $\sigma$ are the mean and standard deviation computed **over the feature dimension** (not the batch), and $\gamma$, $\beta$ are learned scale and shift parameters.
+
+**Why not Batch Norm?**
+In NLP, sequences have variable lengths and mini-batches are small; statistics computed over the batch are unreliable. LayerNorm computes statistics per token, making it robust to sequence length.
+
+### Place in the architecture
+
+In the original paper the order is: sub-layer → Add (skip) → Norm.
+Most modern implementations use *Pre-LN*: Norm → sub-layer → Add, which stabilizes training of very deep networks.
+
+## Dropout in Transformers
+
+Dropout (Hinton et al., 2014) randomly zeroes activations during training:
+
+$$\text{Dropout}(x)_i = \begin{cases} 0 & \text{with probability } p \\ \frac{x_i}{1-p} & \text{otherwise} \end{cases}$$
+
+In transformers, dropout is applied:
+
+1. **To attention weights** $A$ before computing the weighted sum of values.
+2. **To the output of each sub-layer** before the residual addition.
+
+Typical rates: $p \in \{0.1, 0.2\}$.
+Dropout is **disabled at inference time**.
 
 ## Positional encoding
 
@@ -255,8 +298,104 @@ $$ The multi head matrix is $d \times d$, where - $h$ is the number of head, - $
     -   Parallel Processing: Multiple heads allow the model to process different parts of the sequence simultaneously, improving efficiency.
     -   Enhanced Capacity: By attending to information from different subspaces, the model can capture complex patterns and dependencies.
 
+## Complexity of Self-Attention
+
+| Operation | Time complexity | Space complexity |
+|---|---|---|
+| Self-attention | $O(n^2 d)$ | $O(n^2)$ |
+| FFN | $O(n d^2)$ | $O(d^2)$ |
+
+Self-attention is **quadratic in sequence length** $n$.
+For long documents ($n > 4096$) this becomes prohibitive — motivation for variants such as:
+
+-   **Sparse attention** (Longformer, BigBird)
+-   **Linear attention** approximations
+-   **Flash Attention** (IO-aware exact attention, Dao et al. 2022)
+
+Modern LLMs also use a **KV-cache** at inference: keys and values from past tokens are cached so each new token only attends to stored K/V pairs, reducing per-step cost from $O(n^2)$ to $O(n)$.
+
+## Three Transformer Families
+
+| Architecture | Attention mask | Representative models | Typical use |
+|---|---|---|---|
+| **Encoder-only** | Bidirectional (full) | BERT, RoBERTa | Classification, NER, Q&A |
+| **Decoder-only** | Causal (triangular) | GPT-2/3/4, LLaMA | Text generation, chat |
+| **Encoder-Decoder** | Enc: full; Dec: causal + cross-attn | T5, BART, mT5 | Translation, summarization |
+
+**Cross-attention** (encoder-decoder models): the decoder's Q comes from the decoder hidden state, while K and V come from the encoder output.
+This is the original architecture of "Attention is All You Need" (Vaswani et al., 2017).
+
+## Tokenization
+
+Transformers do not operate on raw characters or words but on **subword tokens**.
+
+### Byte-Pair Encoding (BPE)
+
+1. Start with a character-level vocabulary.
+2. Iteratively merge the most frequent adjacent pair of tokens.
+3. Repeat until the vocabulary reaches size $|V|$.
+
+**Example:** `"lower"` → `["low", "er"]`; `"lowest"` → `["low", "est"]`
+
+GPT-2/3/4 use BPE with $|V| \approx 50{,}000$.
+BERT uses **WordPiece** (similar but merges maximise likelihood rather than frequency).
+
+### Why subwords?
+
+-   Handles unknown words (OOV) via decomposition.
+-   Balances vocabulary size vs. sequence length.
+-   Works across languages without language-specific tokenisers.
+
 ## Fine tuning
 
-After a pretraining step that ressembles closely to a decoder...
+After a pretraining step that resembles closely to a decoder...
 
 ![ChatGPT fine tuning  (from A. Karpathy lecture)](../images/chatGPT-steps.jpeg){height=70%}
+
+The modern fine-tuning pipeline consists of three stages:
+
+1. **Pre-training** — CLM on a large corpus; the model learns general language structure.
+2. **Supervised Fine-Tuning (SFT)** — fine-tune on curated (prompt, response) pairs to teach the desired format and style.
+3. **Reinforcement Learning from Human Feedback (RLHF)** — a reward model is trained on human preference rankings; the LLM policy is then optimised with PPO to maximise reward while staying close to the SFT model (KL penalty).
+
+## Generating Text from a Decoder
+
+Given $P(w_{n+1} \mid w_{1:n})$, how do we select the next token?
+
+### Greedy decoding
+Always pick $\arg\max_{w} P(w \mid w_{1:n})$.
+Fast but repetitive — the model tends to loop.
+
+### Beam search
+Maintain $B$ candidate sequences, expand each, keep the $B$ highest probability continuations.
+Better quality but still deterministic.
+
+### Sampling with temperature
+$$P_T(w) \propto P(w)^{1/T}$$
+
+-   $T \to 0$: greedy (deterministic)
+-   $T = 1$: original distribution
+-   $T > 1$: flatter, more random
+
+### Top-$k$ and Top-$p$ (nucleus) sampling
+Restrict sampling to the $k$ most probable tokens, or to the smallest set whose cumulative probability exceeds $p$.
+In practice, `top_p=0.9, temperature=0.8` is a common default for creative tasks.
+
+## From Theory to Code
+
+The TP notebook `gpt_dev.ipynb` implements every concept in this chapter:
+
+| Concept | Location in notebook |
+|---|---|
+| Bigram baseline | Section 1 |
+| Token + positional embedding | Section 3 |
+| Self-attention head | `Head` class |
+| Multi-head attention | `MultiHeadAttention` class |
+| FFN + skip + LayerNorm | `Block` class |
+| Full GPT training loop | Section 5 |
+
+The implementation follows Karpathy's *nanoGPT* and trains on the Tiny Shakespeare dataset (`input.txt`).
+
+::: {.callout-tip}
+Read the notebook alongside this chapter — each class maps directly to a formula above.
+:::

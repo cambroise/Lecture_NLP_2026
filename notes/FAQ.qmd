@@ -1,0 +1,98 @@
+---
+title: "FAQ — Transformer Models Reference"
+format: html
+---
+
+## Models and Tools Referenced in the Transformers Chapter
+
+### BERT (Bidirectional Encoder Representations from Transformers)
+
+- **Family:** Encoder-only
+- **Training objective:** Masked Language Modeling (MLM) — randomly masks tokens and trains the model to predict them using both left and right context.
+- **Attention mask:** Bidirectional (full) — every token attends to every other token.
+- **Goal:** Produce rich contextual representations of text for downstream tasks (classification, named entity recognition, question answering).
+- **Reference:** Devlin et al., Google, 2018.
+
+---
+
+### RoBERTa (Robustly Optimized BERT Pretraining Approach)
+
+- **Family:** Encoder-only
+- **Training objective:** MLM (same as BERT), but with more data, longer training, dynamic masking, and no next-sentence prediction task.
+- **Goal:** Improve BERT's performance by optimising the pretraining procedure rather than the architecture.
+- **Reference:** Liu et al., Facebook AI, 2019.
+
+---
+
+### GPT / GPT-2 / GPT-3 / GPT-4 (Generative Pre-trained Transformer)
+
+- **Family:** Decoder-only
+- **Training objective:** Causal Language Modeling (CLM) — predict the next token given all preceding tokens.
+- **Attention mask:** Causal (lower-triangular) — a token can only attend to past tokens, not future ones.
+- **Goal:** Autoregressive text generation; the basis for conversational agents like ChatGPT.
+- **Vocabulary:** GPT-2/3/4 use Byte-Pair Encoding (BPE) with $|V| \approx 50{,}000$ tokens.
+- **Reference:** Radford et al. (GPT-2, 2019); Brown et al. (GPT-3, 2020), OpenAI.
+
+---
+
+### LLaMA (Large Language Model Meta AI)
+
+- **Family:** Decoder-only
+- **Training objective:** CLM (same family as GPT).
+- **Goal:** An open-weight, efficient large language model; demonstrates that smaller models trained on more data can match larger closed models.
+- **Reference:** Touvron et al., Meta AI, 2023.
+
+---
+
+### T5 (Text-to-Text Transfer Transformer)
+
+- **Family:** Encoder-Decoder
+- **Training objective:** Conditional / Seq2Seq Language Modeling — predict an output sequence given an input sequence.
+- **Attention mask:** Encoder uses full (bidirectional) attention; decoder uses causal attention plus cross-attention to the encoder output.
+- **Goal:** Unify all NLP tasks as text-to-text problems (translation, summarisation, classification, Q&A).
+- **Reference:** Raffel et al., Google, 2019.
+
+---
+
+### mT5 (Multilingual T5)
+
+- **Family:** Encoder-Decoder
+- **Structure:** Same architecture as T5, pre-trained on a multilingual corpus covering 101 languages.
+- **Goal:** Extend T5's text-to-text framework to multilingual settings.
+- **Reference:** Xue et al., Google, 2021.
+
+---
+
+### BART (Bidirectional and Auto-Regressive Transformers)
+
+- **Family:** Encoder-Decoder
+- **Training objective:** Seq2Seq reconstruction — the encoder sees a corrupted version of the input (masking, deletion, permutation); the decoder reconstructs the original.
+- **Goal:** Particularly strong for generation tasks such as summarisation and translation, combining BERT-like encoding with GPT-like decoding.
+- **Reference:** Lewis et al., Facebook AI, 2019.
+
+---
+
+### Longformer
+
+- **Family:** Encoder-only (variant)
+- **Key idea:** **Sparse attention** — combines a sliding-window local attention with global attention on selected tokens, reducing complexity from $O(n^2)$ to $O(n)$.
+- **Goal:** Handle long documents (thousands of tokens) that are intractable for standard full attention.
+- **Reference:** Beltagy et al., Allen AI, 2020.
+
+---
+
+### BigBird
+
+- **Family:** Encoder-only (variant)
+- **Key idea:** **Sparse attention** — combines random attention, local (window) attention, and global attention tokens.
+- **Goal:** Extend transformer capabilities to long sequences while preserving theoretical expressiveness of full attention.
+- **Reference:** Zaheer et al., Google, 2020.
+
+---
+
+### Flash Attention
+
+- **Type:** Algorithmic / hardware-aware attention implementation (not a model family).
+- **Key idea:** Reorders attention computation to minimise slow HBM memory reads/writes on GPUs, computing exact attention without materialising the full $n \times n$ attention matrix.
+- **Goal:** Make standard self-attention faster and more memory-efficient, enabling longer context windows without approximation.
+- **Reference:** Dao et al., 2022.
