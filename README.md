@@ -98,6 +98,15 @@ Output is written to `_book/`. Code execution results are cached via `freeze: au
 
 **Dependencies:** Python with `torch`, `numpy`, `matplotlib`.
 
+### Slides
+
+```bash
+# Render the transformers slides (RevealJS)
+quarto render slides/transformers-slides.qmd --to clean-revealjs
+```
+
+Output: `slides/transformers-slides.html`.
+
 ---
 
 ## Reference material
