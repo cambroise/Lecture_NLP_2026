@@ -1,0 +1,181 @@
+## Exercises — BERT for Sentiment Analysis
+
+These exercises follow the notebook `TP/bert_sentiment.ipynb`, which fine-tunes **BERT** on the SST-2 binary sentiment classification task using the HuggingFace ecosystem.
+
+The theoretical background is in `chapters/transformers.qmd` (pre-training, `[CLS]` token, MLM objective) and `chapters/transformers-applications.qmd` (fine-tuning regimes, text classification head).
+
+## Links
+
+- [BERT paper](https://arxiv.org/abs/1810.04805) — Devlin et al. (2019)
+- [SST-2 dataset](https://huggingface.co/datasets/glue) — part of the GLUE benchmark
+- [HuggingFace `transformers` docs](https://huggingface.co/docs/transformers)
+- [HuggingFace `Trainer` API](https://huggingface.co/docs/transformers/main_classes/trainer)
+- [BertViz — attention visualisation](https://github.com/jessevig/bertviz)
+
+---
+
+### 1) Tokenisation and the `[CLS]` token
+
+**Notebook cells:** 1 – 3
+
+**Goal:** Understand how BERT's WordPiece tokeniser transforms raw text into model inputs, and what role the `[CLS]` token plays.
+
+**Key ideas**
+
+- BERT's vocabulary contains ~30,000 subword units. Unknown words are split into known subpieces (e.g. *unbelievable* → *un, ##bel, ##iev, ##able*).
+- Every input sequence is wrapped as `[CLS] w₁ w₂ … wₙ [SEP]`.
+- The final hidden state of `[CLS]` — a vector in $\mathbb{R}^{768}$ — aggregates the full sequence and is used as the sentence representation for classification.
+
+**Exercises**
+
+1. Tokenise the sentence `"Surprisingly, the sequel surpassed the original."` Print the subword tokens and their IDs. Which words are split into multiple pieces?
+2. How many tokens does the sentence `"good"` produce? And `"unimaginably"` ? What rule does WordPiece follow for out-of-vocabulary words?
+3. The tokeniser pads sequences to `MAX_LEN = 128` with `[PAD]` tokens. Inspect the `attention_mask` returned for a short sentence (e.g. 10 tokens). What values does it take, and why does the model need it?
+4. Change `max_length` from 128 to 64. What happens to sentences longer than 64 tokens? Is any information lost?
+
+---
+
+### 2) Dataset exploration
+
+**Notebook cells:** 4 – 6
+
+**Goal:** Characterise the SST-2 dataset before training.
+
+**Key ideas**
+
+- SST-2 contains 67,349 training sentences and 872 validation sentences drawn from movie reviews, labelled as positive (1) or negative (0).
+- The dataset is part of GLUE and is nearly balanced.
+
+**Exercises**
+
+1. Plot the distribution of sentence lengths (in tokens) for the training set. What is the mean length? What fraction of sentences exceeds 64 tokens?
+2. Print 5 positive and 5 negative examples. Is the sentiment always unambiguous? Find at least one sentence where you would disagree with the label.
+3. The validation set has only 872 examples. Why might this lead to high variance in the evaluation metric? How could you build a more reliable estimate?
+
+---
+
+### 3) Feature extraction with frozen BERT
+
+**Notebook cells:** 7 – 9
+
+**Goal:** Use BERT as a fixed feature extractor — no gradient flows into the Transformer.
+
+**Key ideas**
+
+- Frozen BERT maps each sentence to its `[CLS]` embedding in $\mathbb{R}^{768}$.
+- A logistic regression classifier trained on these embeddings already achieves strong accuracy because BERT's pre-training encodes rich linguistic knowledge.
+- This regime is fast (no backprop through 110 M parameters) and useful when labelled data is scarce.
+
+**Exercises**
+
+1. Run the feature extraction cell. How long does it take to embed 5,000 training sentences? Estimate the time for the full training set of 67,349 sentences.
+2. Train the logistic regression with regularisation strengths $C \in \{0.01, 0.1, 1, 10\}$. Plot validation accuracy vs $C$. What is the optimal value?
+3. Replace logistic regression with a two-layer MLP (`sklearn.neural_network.MLPClassifier`). Does performance improve? Why or why not?
+4. Reduce the embeddings to 2 dimensions with PCA and plot the validation set coloured by label. Are the two classes linearly separable in the 2D projection?
+
+---
+
+### 4) Full fine-tuning
+
+**Notebook cells:** 10 – 12
+
+**Goal:** Fine-tune all BERT parameters jointly with the classification head, and understand the hyperparameter choices.
+
+**Key ideas**
+
+- The standard fine-tuning recipe for BERT: Adam with weight decay (AdamW), learning rate $2 \times 10^{-5}$, 3 epochs, linear warm-up over 10 % of steps.
+- Fine-tuning updates all 110 M parameters, so it requires more memory and time than feature extraction but typically yields higher accuracy.
+- The classification loss is cross-entropy: $L = -\sum_{c} y_c \log \hat{y}_c$.
+
+**Exercises**
+
+1. Fine-tune for 1, 2 and 3 epochs. Plot train loss and validation accuracy per epoch. At which epoch does the model start to overfit?
+2. Try learning rates $\{1 \times 10^{-5}, 2 \times 10^{-5}, 5 \times 10^{-5}\}$. What happens with the large learning rate? (Hint: watch for *catastrophic forgetting*.)
+3. Set `TRAIN_SUBSET = None` to use the full training set. How much does accuracy improve compared to the 5,000-sample version?
+4. Compare the validation accuracy of frozen BERT + logistic regression vs full fine-tuning. Quantify the gain. Under what constraints (compute, labelled data size) would you prefer the frozen approach?
+
+---
+
+### 5) Embedding geometry before and after fine-tuning
+
+**Notebook cells:** 13
+
+**Goal:** Visualise how fine-tuning reshapes the `[CLS]` embedding space.
+
+**Key ideas**
+
+- Before fine-tuning, BERT's `[CLS]` representations are general-purpose language features — not specialised for sentiment.
+- After fine-tuning, the representations are pulled towards a geometry that separates positive from negative sentences.
+- PCA captures the dominant axes of variation; these may or may not align with the sentiment axis.
+
+**Exercises**
+
+1. Compare the two PCA scatter plots (frozen vs fine-tuned). In which plot are the two classes better separated? Is the boundary approximately linear in 2D?
+2. Compute the **silhouette score** (`sklearn.metrics.silhouette_score`) for both embedding sets. Does the score match the visual impression?
+3. Replace PCA with UMAP (`umap-learn` package). Does UMAP reveal more structure? Why might UMAP give a more informative picture than PCA for these embeddings?
+4. **Reflection:** PCA of the fine-tuned embeddings shows a clear positive/negative axis. Does this mean BERT "understands" sentiment, or could another explanation account for the separation?
+
+---
+
+### 6) Error analysis
+
+**Notebook cells:** 14
+
+**Goal:** Understand where the model fails and why.
+
+**Exercises**
+
+1. Print all misclassified examples. Do errors cluster around certain phenomena (negation, sarcasm, short sentences, domain-specific vocabulary)? Give concrete examples.
+2. For the sentence *"It's not terrible, but it's not good either."*, what does the model predict? Why might a model struggle with negation?
+3. Find the 5 examples where the model is **most confident but wrong** (highest probability assigned to the incorrect class). What do these examples have in common?
+4. BERT was pre-trained on Wikipedia and BookCorpus, not movie reviews. How might this domain mismatch explain some errors?
+
+---
+
+### 7) Custom inference and the `pipeline` API
+
+**Notebook cells:** 15
+
+**Goal:** Apply the fine-tuned model to new sentences and interpret the outputs.
+
+**Exercises**
+
+1. Write 10 sentences with varying degrees of sentiment (from strongly negative to strongly positive). Run them through the pipeline. Does the model's confidence (`score`) correlate with your subjective rating?
+2. Test sentences with irony or sarcasm such as *"What a masterpiece of bad filmmaking."* Does the model handle them correctly?
+3. Try a non-English sentence (e.g. French). What does the model output? Does it reflect the actual sentiment? Why or why not?
+4. The `pipeline` splits sequences longer than `max_length` tokens. Test a very long review (> 200 words). Does the prediction remain accurate?
+
+---
+
+### 8) Attention visualisation (optional)
+
+**Notebook cells:** 16 – 17
+
+**Goal:** Inspect the attention patterns of the fine-tuned model to gain interpretability insights.
+
+**Key ideas**
+
+- BERT has 12 layers, each with 12 attention heads — 144 heads in total, each attending differently.
+- Some heads are known to specialise (e.g. syntactic dependencies, coreference). Sentiment-relevant heads tend to appear in the last layers.
+
+**Exercises**
+
+1. Plot the attention matrix for layer 11 (the last layer) averaged over all heads. Which tokens does `[CLS]` attend to most? Do these tokens match your intuition about sentiment-bearing words?
+2. Instead of averaging, plot a single head (e.g. head 0, layer 11). How does the pattern differ from the average?
+3. Compare attention patterns for a correctly classified sentence and a misclassified one. Is there a visible difference in what the model focuses on?
+4. **Reflection:** Can attention weights be interpreted as explanations? Briefly discuss the paper *"Attention is not Explanation"* (Jain & Wallace, 2019) and its main argument.
+
+---
+
+### Summary — Fine-tuning regimes
+
+| | Feature extraction | Full fine-tuning |
+|---|---|---|
+| BERT weights updated | No | Yes |
+| Classifier | Logistic regression / MLP | Linear head (trained jointly) |
+| Training time | Fast (encode once) | Slower (backprop through 110 M params) |
+| Memory | Low | High |
+| Accuracy on SST-2 | ~88 % | ~93 % |
+| Best when | Little labelled data, limited compute | More data, GPUs available |
+
+**Final reflection:** Both methods produce a **single representation per sentence** regardless of token count. What architectural change would allow variable-length, more expressive sentence representations? (Hint: see the lecture on encoder–decoder models and sentence encoders such as Sentence-BERT.)

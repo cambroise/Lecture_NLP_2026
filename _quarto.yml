@@ -20,7 +20,10 @@ book:
     - chapters/transformers.qmd
     - chapters/transformers-exercice.qmd
     - TP/gpt_dev.ipynb
-
+    - chapters/transformers-applications.qmd
+    - chapters/bert-sentiment-exercice.qmd
+    - TP/bert_sentiment.ipynb
+ 
 format:
   html:
     theme: cosmo

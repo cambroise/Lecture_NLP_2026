@@ -22,6 +22,9 @@ The course covers the full arc of NLP, from classical word representation method
 | 4 | **Transformers** | Self-attention, positional encoding, encoder/decoder architectures, BERT, GPT, fine-tuning (SFT, RLHF) |
 | 5 | **Transformer exercises** | Conceptual questions on attention, masking, and training objectives |
 | 6 | **GPT from scratch notebook** | Character-level GPT implementation in PyTorch following Karpathy's nanoGPT |
+| 7 | **Transformers in Practice** | Downstream tasks: text classification, QA, seq2seq, generation; fine-tuning regimes |
+| 8 | **BERT exercises** | Fine-tuning BERT for sentiment analysis; feature extraction vs. full fine-tuning |
+| 9 | **BERT sentiment notebook** | Fine-tune BERT on SST-2; frozen vs. fine-tuned embeddings, error analysis, attention visualisation |
 
 ---
 
@@ -34,10 +37,13 @@ The course covers the full arc of NLP, from classical word representation method
 │   ├── word-embedding.qmd           # Chapter 1 — Classical word embeddings
 │   ├── embedding-exercise.qmd       # Chapter 2 — Embedding exercises
 │   ├── transformers.qmd             # Chapter 4 — Transformer architecture
-│   └── transformers-exercice.qmd    # Chapter 5 — Transformer exercises
+│   ├── transformers-exercice.qmd    # Chapter 5 — Transformer exercises
+│   ├── transformers-applications.qmd # Chapter 7 — Transformers in practice
+│   └── bert-sentiment-exercice.qmd  # Chapter 8 — BERT sentiment exercises
 ├── TP/
 │   ├── lsa_word2vec.ipynb           # Practical 1 — LSA & Word2Vec (Chapter 3)
 │   ├── gpt_dev.ipynb                # Practical 2 — GPT from scratch (Chapter 6)
+│   ├── bert_sentiment.ipynb         # Practical 3 — BERT sentiment analysis (Chapter 9)
 │   └── input.txt                    # Tiny Shakespeare dataset
 ├── notes/
 │   └── FAQ.qmd                      # Reference sheet: BERT, RoBERTa, GPT family…
@@ -62,6 +68,8 @@ By the end of the course, students will be able to:
 - Describe the self-attention mechanism and the Transformer architecture mathematically
 - Distinguish encoder-only (BERT), decoder-only (GPT), and encoder-decoder models
 - Implement a character-level GPT from scratch in PyTorch
+- Apply pre-trained Transformer models (BERT) to downstream NLP tasks via fine-tuning
+- Compare feature-extraction and full fine-tuning regimes and interpret attention patterns
 
 ---
 
@@ -78,6 +86,16 @@ Full GPT implementation following Andrej Karpathy's *"Let's build GPT"* lecture:
 - Character-level tokeniser on the Tiny Shakespeare dataset
 - Bigram language model → multi-head self-attention → full GPT block
 - Training loop, loss curves, and text generation in PyTorch
+
+### `TP/bert_sentiment.ipynb`
+Fine-tuning BERT for binary sentiment analysis on the SST-2 dataset:
+- WordPiece tokenisation and `[CLS]` embedding extraction
+- **Regime 1 — Feature extraction:** frozen BERT + logistic regression classifier
+- **Regime 2 — Full fine-tuning:** joint training with the HuggingFace `Trainer` API
+- PCA visualisation of embeddings before/after fine-tuning, error analysis, custom inference
+- Attention weight visualisation (layer 11, all heads)
+
+**Additional dependencies:** `transformers`, `datasets`, `evaluate`, `accelerate`, `scikit-learn`
 
 ---
 
@@ -98,7 +116,7 @@ quarto render chapters/transformers.qmd
 
 Output is written to `_book/`. Code execution results are cached via `freeze: auto` — delete `.quarto/` to force re-execution.
 
-**Dependencies:** Python with `torch`, `numpy`, `matplotlib`.
+**Dependencies:** Python with `torch`, `numpy`, `matplotlib`, `transformers`, `datasets`, `evaluate`, `accelerate`, `scikit-learn`.
 
 ### Slides
 
@@ -116,4 +134,6 @@ Output: `slides/transformers-slides.html`.
 - Jurafsky & Martin, *Speech and Language Processing* (3rd ed. draft) — in `documents/`
 - Vaswani et al. (2017), [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
 - Karpathy, [nanoGPT](https://github.com/karpathy/nanoGPT) and [video lecture](https://www.youtube.com/watch?v=kCc8FmEb1nY)
+- Devlin et al. (2019), [BERT: Pre-training of Deep Bidirectional Transformers](https://arxiv.org/abs/1810.04805)
+- HuggingFace, [Transformers documentation](https://huggingface.co/docs/transformers)
 - `notes/FAQ.qmd` — concise reference sheet for BERT, RoBERTa, GPT-2/3, T5, and other models covered in the course

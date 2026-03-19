@@ -11,26 +11,31 @@ execute:
   echo: true
   warning: true
   error: true
+
 format:
+  revealjs:
+    theme: simple
+    html-math-method: mathjax
+    scrollable: true
+    transition: convex
+    embed-resources: true
+    echo: false
+    width: 2000
+    height: 1050
+    margin: 0.1
+    min-scale: 0.2
+    max-scale: 2.0
+    mermaid:
+      fontSize: 24
+    mermaid-format: svg
+    slide-number: true
+
   clean-revealjs:
     html-math-method: mathjax
     scrollable: true
     transition: convex
     embed-resources: true
     echo: false
-
-  revealjs:
-    theme: league
-    html-math-method: mathjax
-    scrollable: true
-    transition: convex
-    embed-resources: true
-    echo: false
-    width: 2400
-    height: 1350
-    margin: 0.1
-    min-scale: 0.2
-    max-scale: 2.0
 
 
   pdf:
@@ -62,3 +67,9 @@ format:
 ---
 
 {{< include ../chapters/transformers.qmd >}}
+{{< include ../chapters/transformers-applications.qmd >}}
+
+
+
+
+

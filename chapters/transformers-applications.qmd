@@ -1,0 +1,272 @@
+# Transformers in Practice: Applications
+
+## Outline
+
+-   How the three transformer families are applied to core NLP **downstream tasks**:
+    -   Text classification
+    -   Question answering
+    -   Sequence-to-sequence tasks (translation, summarization)
+    -   Open-ended generation (chat, code generation)
+
+
+
+---
+
+## From Pre-training to Downstream Tasks
+
+Pre-training gives the model general language knowledge.
+**Fine-tuning** adapts it to a specific task using a labelled dataset.
+
+
+```{mermaid}
+graph TB
+    A["Large unlabelled corpus"] --> B["Pre-trained model"]
+    B --> C["Fine-tune on task data"]
+    C --> D["Task-specific model"]
+```
+
+
+
+::: {.callout-tip}
+**language knowledge transfers**:  fine-tuning needs far less data than training from scratch.
+:::
+
+
+## Text Classification
+
+**Architecture:** Encoder-only (BERT, RoBERTa)
+
+
+
+Given a sequence $w_{1:n}$, prepend a special `[CLS]` token; use its final hidden state $h_{\text{[CLS]}} \in \mathbb{R}^d$ as the sentence representation:
+
+::: {style="width: 60%; margin: auto;"}
+![Transformer encoder architecture showing the [CLS] token prepended to the input sequence, with its final hidden state $h_{[CLS]}$ extracted as the sentence representation for downstream classification tasks](../images/transformer-cls.png)
+:::
+
+A linear classification head maps $h_{\text{[CLS]}}$ to class probabilities:
+
+$$
+\hat{y} = \text{softmax}(W \, h_{\text{[CLS]}} + b)
+$$
+
+where $W \in \mathbb{R}^{C \times d}$ and $C$ is the number of classes.
+
+
+---
+
+## Regime 1 — End-to-End Fine-Tuning (standard BERT)
+ 
+The classifier and the Transformer are trained **jointly** via a single backpropagation pass:
+ 
+$$\mathcal{L} = \mathcal{L}_{\text{CE}}(\hat{y}, y)
+  \xrightarrow{\text{backprop}} W, b \;\text{ AND }\; \theta_{\text{Transformer}}$$
+ 
+- $h_{\texttt{[CLS]}}$ **evolves** during training.
+- The Transformer learns representations that are **adapted to the classification task**.
+- The two components are **tightly coupled**.
+ 
+---
+ 
+## Regime 2 — Feature Extraction (frozen encoder)
+ 
+The pre-trained Transformer is **frozen**; only the classifier head is trained.
+ 
+| Step | Action |
+|------|--------|
+| 1 | Extract $h_{\texttt{[CLS]}}$ as a **fixed** feature vector |
+| 2 | Train $W, b$ supervised on the downstream task |
+ 
+- No gradient flows into $\theta_{\text{Transformer}}$.
+- The two stages are **fully decoupled**.
+- Computationally cheaper, but less flexible.
+ 
+---
+ 
+
+**Typical tasks:**
+
+| Task | Example |
+|---|---|
+| Sentiment analysis | positive / negative / neutral |
+| Topic classification | sports, politics, science… |
+| Spam detection | spam / ham |
+| Intent detection | book_flight, check_balance… |
+
+::: {.callout-note}
+Fine-tuning BERT on sentiment analysis (SST-2) takes a few minutes on a GPU and reaches $\approx 93\%$ accuracy, vs. $\approx 85\%$ for a classical SVM on TF-IDF features.
+:::
+
+## Question Answering (Extractive QA)
+
+**Architecture:** Encoder-only (BERT-style)
+
+Input: `[CLS] question [SEP] context [SEP]`
+
+Two linear heads predict the **start** and **end** positions of the answer span in the context:
+
+$$
+s_t = w_{\text{start}}^T h_t, \qquad e_t = w_{\text{end}}^T h_t
+$$
+
+The answer is the span $[i^*, j^*]$ that maximises $s_{i^*} + e_{j^*}$ with $j^* \geq i^*$.
+where $i^*$ and $j^*$ are considered as semantic scores for the start and end of the answer span, respectively. 
+
+They are high when the corresponding token positions are likely to be the start and end of the answer in the context. 
+
+The model learns to assign high scores to the correct start and end positions during training, allowing it to extract the relevant span from the context when given a question.
+
+
+
+
+
+---
+
+
+## Example: BERT on SQuAD 1.1
+ 
+This example is drawn from the **Prime number** article in SQuAD 1.1 (dev set).
+ 
+> *"The property of being prime is called primality. A simple but slow method of verifying
+> the primality of a given number $n$ is known as **trial division**."*
+ 
+**Question:** What is the name of the method of verifying the primality of a given number?
+ 
+**Gold answer:** `trial division`
+ 
+---
+ 
+## Token-level scores (toy illustration)
+ 
+After fine-tuning, BERT produces a start score $s_t$ and an end score $e_t$ for each token
+via two learned projection vectors $w_{\text{start}}, w_{\text{end}} \in \mathbb{R}^H$ :
+ 
+$$s_t = w_{\text{start}}^\top h_t, \qquad e_t = w_{\text{end}}^\top h_t.$$
+ 
+| $t$ | Token | $s_t$ (start) | $e_t$ (end) | notes |
+|-----|-------|--------------|------------|-------|
+| 1  | The | −2.1 | −1.8 | article |
+| 2  | property | −1.4 | −1.2 | |
+| 3  | of | −1.9 | −1.7 | |
+| 4  | being | −1.3 | −1.1 | |
+| 5  | prime | −0.8 | −0.6 | |
+| 6  | is | −1.5 | −1.3 | |
+| 7  | called | −1.2 | −1.0 | |
+| 8  | primality | −0.4 | −0.2 | plausible but wrong |
+| 9  | . | −2.3 | −2.1 | punctuation |
+| 10 | A | −1.8 | −1.6 | |
+| 11 | simple | −0.3 | −0.1 | |
+| 12 | but | −1.6 | −1.4 | |
+| 13 | slow | −0.5 | −0.3 | |
+| 14 | method | −0.2 | +0.1 | |
+| 15 | of | −1.7 | −1.5 | |
+| 16 | verifying | −0.6 | −0.4 | |
+| 17 | the | −1.9 | −1.7 | |
+| 18 | primality | −0.7 | −0.5 | |
+| 19 | of | −1.8 | −1.6 | |
+| 20 | a | −1.7 | −1.5 | |
+| 21 | given | −0.9 | −0.7 | |
+| 22 | number | −1.1 | −0.9 | |
+| 23 | is | −1.4 | −1.2 | |
+| 24 | known | −1.0 | −0.8 | |
+| 25 | as | −1.3 | −1.1 | |
+| 26 | **trial** | **+3.8** | +0.2 | ← best start |
+| 27 | **division** | +0.4 | **+4.1** | ← best end |
+| 28 | . | −2.2 | −2.0 | punctuation |
+ 
+---
+ 
+## Span selection
+ 
+The predicted span maximises $f(i,j) = s_i + e_j$ subject to $j \geq i$ :
+ 
+$$f(26,\,27) = 3.8 + 4.1 = \mathbf{7.9} \quad \leftarrow \text{global maximum}$$
+ 
+A few competing pairs for comparison :
+ 
+| $(i, j)$ | span | $s_i + e_j$ |
+|----------|------|------------|
+| (26, 27) | *trial division* | **7.9** ✓ |
+| (8, 8) | *primality* | $-0.4 + (-0.2) = -0.6$ |
+| (11, 14) | *simple but slow method* | $-0.3 + 0.1 = -0.2$ |
+| (26, 28) | *trial division .* | $3.8 + (-2.0) = 1.8$ |
+| (1, 27) | entire sentence fragment | $-2.1 + 4.1 = 2.0$ |
+ 
+The constraint $j \geq i$ eliminates impossible spans (end before start),
+but it does **not** favour long spans: the longest candidate $(1,\,27)$ scores only $2.0$,
+far below the correct short span $(26,\,27)$.
+ 
+
+
+
+## Results on SQuAD 1.1
+ 
+| System | EM | F1 |
+|--------|----|----|
+| Human performance | 82.3 | **91.2** |
+| BERT Large (single model) | 84.1 | **93.2** |
+| BERT Large (ensemble) | 85.8 | **93.6** |
+ 
+BERT Large achieves **F1 = 93.2** (single model), **above human performance (91.2)** by +2.0 points.
+ 
+> "For the first time, a machine surpasses human-level performance on SQuAD 1.1."
+> — Devlin et al. (2018)
+ 
+---
+ 
+
+
+## Sequence-to-Sequence Tasks
+
+**Architecture:** Encoder-Decoder (T5, BART, mBART)
+
+These tasks require generating a full output sequence, not just a label or span.
+
+| Task | Input | Output |
+|---|---|---|
+| Machine translation | "I love Paris" | "J'aime Paris" |
+| Summarization | long article | short abstract |
+| Text simplification | complex sentence | simpler sentence |
+| Grammar correction | sentence with errors | corrected sentence |
+
+The training loss is the standard conditional language model loss:
+
+$$
+L = - \sum_t \log P(v_t \mid v_{1:t-1},\, w_{1:n})
+$$
+
+::: {.callout-tip}
+T5 ("Text-to-Text Transfer Transformer") frames **every NLP task** as text-to-text: even classification becomes generating the string `"positive"` or `"negative"`.
+:::
+
+## Text Generation (Decoder-only)
+
+**Architecture:** Decoder-only (GPT family, LLaMA, Mistral)
+
+Given a prompt, the model generates tokens autoregressively:
+
+$$
+P(w_{1:T}) = \prod_{t=1}^T P(w_t \mid w_{1:t-1})
+$$
+
+Typical applications:
+
+-   **Chatbots / assistants** (ChatGPT, Claude)
+-   **Code generation** (GitHub Copilot, CodeLlama)
+-   **Creative writing** and content generation
+-   **Instruction following** (after SFT + RLHF)
+
+Generation quality depends heavily on the **decoding strategy** (greedy, beam search, top-$k$/top-$p$, temperature) seen in the previous chapter.
+
+
+
+## Summary: Architecture × Task
+
+| Task | Architecture | Loss at fine-tuning |
+|---|---|---|
+| Classification | Encoder (CLS head) | Cross-entropy (1 token) |
+| Extractive QA | Encoder (span head) | Cross-entropy (start + end) |
+| Translation, summarization | Encoder-Decoder | CLM on decoder output |
+| Open-ended generation | Decoder-only | CLM |
+
+---

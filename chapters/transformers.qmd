@@ -21,22 +21,6 @@
 
 
 
-
-
-```{mermaid}
-graph LR
-    A["1950: Turing Test proposed by Alan Turing"]
-    A --> B["1956: Artificial Intelligence term coined at Dartmouth Conference"]
-    B --> C["1966: ELIZA, an early NLP program, developed"]
-    C --> D["1997: IBM's Deep Blue defeats chess champion Garry Kasparov"]
-    D --> E["2012: Deep learning breakthroughs with neural networks"]
-    E --> F["2015: OpenAI founded"]
-    F --> G["2017: Transformer model introduced"]
-    G --> H["2020: GPT-3 released by OpenAI"]
-    H --> I["2022: ChatGPT launched by OpenAI"]
-```
-
-
 ## What is a Transformer?
 
 ::::: columns
@@ -325,8 +309,7 @@ Modern LLMs also use a **KV-cache** at inference: keys and values from past toke
 | **Decoder-only** | Causal (triangular) | GPT-2/3/4, LLaMA | Text generation, chat |
 | **Encoder-Decoder** | Enc: full; Dec: causal + cross-attn | T5, BART, mT5 | Translation, summarization |
 
-**Cross-attention** (encoder-decoder models): the decoder's Q comes from the decoder hidden state, while K and V come from the encoder output.
-This is the original architecture of "Attention is All You Need" (Vaswani et al., 2017).
+
 
 ## Tokenization
 
@@ -345,21 +328,41 @@ BERT uses **WordPiece** (similar but merges maximise likelihood rather than freq
 
 ### Why subwords?
 
--   Handles unknown words (OOV) via decomposition.
+-   Handles unknown words (out of vocabulary (OOV)) via decomposition.
 -   Balances vocabulary size vs. sequence length.
 -   Works across languages without language-specific tokenisers.
 
-## Fine tuning
+
+
+
+## Additional steps — Supervised Fine-Tuning (SFT) + Reinforcement Learning from Human Feedback (RLHF)
 
 After a pretraining step that resembles closely to a decoder...
 
-![ChatGPT fine tuning  (from A. Karpathy lecture)](../images/chatGPT-steps.jpeg){height=70%}
+A raw CLM model **continues text**, it does not follow instructions.
 
-The modern fine-tuning pipeline consists of three stages:
+Two fine-tuning stages are needed:
+ 
+**1. Supervised Fine-Tuning (SFT)**
+Train on (instruction, response) pairs to shift the distribution
+toward helpful answers.
+ 
+**2. Reinforcement Learning from Human Feedback (RLHF)**
+A reward model scores responses; the LLM is updated via Proximal Policy Optimization (PPO) or Direct Preference Optimization (DPO) to maximise human preference.
+ 
+## PPO — Proximal Policy Optimization
+ 
+Schulman et al. (2017) — used by OpenAI for **InstructGPT / ChatGPT**.
+ 
+The LLM is treated as a **policy** $\pi_\theta$ updated to maximise expected reward:
+ 
+$$\mathcal{L}_{\text{PPO}} = \mathbb{E}\!\left[ r_\phi(x, y) - \beta \, \mathrm{KL}\!\left(\pi_\theta \| \pi_{\text{ref}}\right) \right]$$
+ 
+- $r_\phi(x, y)$ — reward model score for response $y$ given prompt $x$
+- $\mathrm{KL}(\pi_\theta \| \pi_{\text{ref}})$ — prevents the policy from drifting too far from the reference model
+- $\beta$ — controls the strength of the KL penalty
 
-1. **Pre-training** — CLM on a large corpus; the model learns general language structure.
-2. **Supervised Fine-Tuning (SFT)** — fine-tune on curated (prompt, response) pairs to teach the desired format and style.
-3. **Reinforcement Learning from Human Feedback (RLHF)** — a reward model is trained on human preference rankings; the LLM policy is then optimised with PPO to maximise reward while staying close to the SFT model (KL penalty).
+
 
 ## Generating Text from a Decoder
 
@@ -399,6 +402,3 @@ The TP notebook `gpt_dev.ipynb` implements every concept in this chapter:
 
 The implementation follows Karpathy's *nanoGPT* and trains on the Tiny Shakespeare dataset (`input.txt`).
 
-::: {.callout-tip}
-Read the notebook alongside this chapter — each class maps directly to a formula above.
-:::
