@@ -122,10 +122,13 @@ Output is written to `_book/`. Code execution results are cached via `freeze: au
 
 ```bash
 # Render the transformers slides (RevealJS)
-quarto render slides/transformers-slides.qmd --to clean-revealjs
+quarto render slides/transformers-slides.qmd --to revealjs
+
+# Render the word embeddings slides (RevealJS)
+quarto render slides/word-embedding-slides.qmd --to revealjs
 ```
 
-Output: `slides/transformers-slides.html`.
+Output: `slides/transformers-slides.html`, `slides/word-embedding-slides.html`.
 
 ---
 
