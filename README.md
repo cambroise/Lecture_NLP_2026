@@ -4,6 +4,8 @@
 
 Lecture notes and practical notebooks for the **Natural Language Processing** course taught to M2 students in the *Santé Assurance Finance* (SAF) programme at the **University of Evry Paris-Saclay**.
 
+> **Note:** This repository is primarily a collection of lecture slides compiled into a Quarto book for convenience. It should not be considered a comprehensive textbook or self-contained learning resource.
+
 > **Author:** Christophe Ambroise
 > **Level:** Master 2 — Data Science
 > **Licence:** [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
@@ -48,7 +50,10 @@ The course covers the full arc of NLP, from classical word representation method
 ├── notes/
 │   └── FAQ.qmd                      # Reference sheet: BERT, RoBERTa, GPT family…
 ├── slides/
-│   └── transformers-slides.html     # RevealJS slides for the transformers chapter
+│   ├── transformers-slides.qmd      # RevealJS source for the transformers chapter
+│   ├── transformers-slides.html     # Rendered RevealJS slides — transformers
+│   ├── word-embedding-slides.qmd    # RevealJS source for the word embeddings chapter
+│   └── word-embedding-slides.html   # Rendered RevealJS slides — word embeddings
 ├── images/                          # Diagrams and figures
 ├── documents/                       # Reference textbook (Jurafsky & Martin)
 ├── _quarto.yml                      # Quarto book configuration
